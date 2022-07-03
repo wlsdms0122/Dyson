@@ -5,21 +5,23 @@
 //  Created by jsilver on 2021/06/06.
 //
 
-import XCTest
 import Quick
 import Nimble
 @testable import Network
 
+@MainActor
 final class NetworkTests: QuickSpec {
     override func spec() {
         describe("NetworkResponser에") {
-            let networkResponser: NetworkResponser = GitHubNetworkResponser(networkProvider: NetworkProvider())
+            let networkResponser: NetworkResponser = GitHubNetworkResponser(
+                networkProvider: NetworkProvider()
+            )
             
             context("Target으로 요청하면") {
-                let target = GitHubTarget(.init(id: "wlsdms0122"))
-                
-                it("응답값이 와야한다") {
+                it("closure로 응답값이 와야한다") {
+                    print("B")
                     // Given
+                    let target = GitHubTarget(.init(id: "wlsdms0122"))
                     
                     // When
                     
@@ -36,6 +38,27 @@ final class NetworkTests: QuickSpec {
                             
                             done()
                         }
+                    }
+                }
+                
+                it ("await으로 응답값이 와야한다") {
+                    print("C")
+                    // Given
+                    let target = GitHubTarget(.init(id: "wlsdms0122"))
+                    
+                    // When
+                    
+                    // Then
+                    waitUntil { done in
+                        _Concurrency.Task {
+                            do {
+                                try await networkResponser.request(target)
+                                done()
+                            } catch {
+                                fail()
+                            }
+                        }
+                            
                     }
                 }
             }
