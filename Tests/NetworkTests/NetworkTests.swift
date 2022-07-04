@@ -19,7 +19,6 @@ final class NetworkTests: QuickSpec {
             
             context("Target으로 요청하면") {
                 it("closure로 응답값이 와야한다") {
-                    print("B")
                     // Given
                     let target = GitHubTarget(.init(id: "wlsdms0122"))
                     
@@ -42,7 +41,6 @@ final class NetworkTests: QuickSpec {
                 }
                 
                 it ("await으로 응답값이 와야한다") {
-                    print("C")
                     // Given
                     let target = GitHubTarget(.init(id: "wlsdms0122"))
                     

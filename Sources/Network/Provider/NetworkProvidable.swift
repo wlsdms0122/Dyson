@@ -20,7 +20,6 @@ public extension NetworkProvidable {
     @discardableResult
     func request<T: Target>(
         _ target: T,
-        progress: ((Progress) -> Void)? = nil,
         completion: @escaping (Data?, URLResponse?, Error?) -> Void
     ) -> URLSessionTask? {
         request(target, progress: nil, completion: completion)
