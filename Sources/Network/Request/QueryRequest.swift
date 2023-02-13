@@ -21,14 +21,15 @@ public struct QueryRequest: Request {
         guard var components = URLComponents(
             url: url,
             resolvingAgainstBaseURL: false
-        ) else {
-            throw NetworkError.invalidURL(url.absoluteString)
+        )
+        else {
+            throw NetworkError.invalidURL
         }
         
         components.queryItems = parameter.map { .init(name: $0, value: $1) }
         
         guard let url = components.url else {
-            throw NetworkError.invalidURL(url.absoluteString)
+            throw NetworkError.invalidURL
         }
         
         return URLRequest(url: url)

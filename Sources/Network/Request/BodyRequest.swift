@@ -20,10 +20,8 @@ public struct BodyRequest<Parameter>: Request {
     
     // MARK: - Public
     public func make(url: URL) throws -> URLRequest {
-        let data = try encoder.encode(parameter)
-        
         var request = URLRequest(url: url)
-        request.httpBody = data
+        request.httpBody = try encoder.encode(parameter)
         
         return request
     }

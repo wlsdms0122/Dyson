@@ -11,19 +11,13 @@ import RxSwift
 
 public extension NetworkResponser {
     func request<T: Target>(_ target: T) -> Single<T.Result> {
-        .create { [weak self] emitter in
-            let task = self?.request(target) { result in
-                switch result {
-                case let .success(result):
-                    emitter(.success(result))
-                    
-                case let .failure(error):
-                    emitter(.failure(error))
-                }
+        .create { emitter in
+            let task = request(target) {
+                emitter($0)
             }
             
             return Disposables.create {
-                task?.cancel()
+                task.cancel()
             }
         }
     }

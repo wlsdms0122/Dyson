@@ -5,61 +5,46 @@
 //  Created by jsilver on 2021/06/06.
 //
 
-import Quick
-import Nimble
+import XCTest
+import UIKit
 @testable import Network
 
-@MainActor
-final class NetworkTests: QuickSpec {
-    override func spec() {
-        describe("NetworkResponser에") {
-            let networkResponser: NetworkResponser = GitHubNetworkResponser(
-                networkProvider: NetworkProvider()
-            )
-            
-            context("Target으로 요청하면") {
-                it("closure로 응답값이 와야한다") {
-                    // Given
-                    let target = GitHubTarget(.init(id: "wlsdms0122"))
-                    
-                    // When
-                    
-                    // Then
-                    waitUntil { done in
-                        networkResponser.request(target) { result in
-                            switch result {
-                            case .success:
-                                break
-                                
-                            case .failure:
-                                fail()
-                            }
-                            
-                            done()
-                        }
-                    }
+final class NetworkTests: XCTestCase {
+    // MARK: - Property
+    private var accessToken: String?
+    
+    private lazy var networkResponser: any NetworkResponser = NTNetworkResponser(
+        provider: URLNetworkProvider(
+            interceptors: [
+                LogInterceptor(),
+                AuthorizationInterceptor { [weak self] in
+                    guard let accessToken = self?.accessToken else { return nil }
+                    return "Bearer \(accessToken)"
+                },
+                JWTInterceptor { [weak self] in
+                    self?.accessToken = $0
                 }
-                
-                it ("await으로 응답값이 와야한다") {
-                    // Given
-                    let target = GitHubTarget(.init(id: "wlsdms0122"))
-                    
-                    // When
-                    
-                    // Then
-                    waitUntil { done in
-                        _Concurrency.Task {
-                            do {
-                                try await networkResponser.request(target)
-                                done()
-                            } catch {
-                                fail()
-                            }
-                        }
-                            
-                    }
-                }
-            }
-        }
+            ]
+        )
+    )
+    
+    // MARK: - Lifecycle
+    override func setUp() {
+        
+    }
+    
+    override func tearDown() {
+        
+    }
+    
+    // MARK: - Test
+    func test_that_network() async throws {
+        // Given
+        let listTarget = ListTarget(.init())
+        
+        // When
+        let _ = try await networkResponser.request(listTarget)
+        
+        // Then
     }
 }

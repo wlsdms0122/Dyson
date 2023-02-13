@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - Encoder
-public protocol Encode {
+public protocol Encode<Value> {
     associatedtype Value
     
     func encode(_ value: Value) throws -> Data
@@ -16,26 +16,21 @@ public protocol Encode {
 
 public struct Encoder<Value>: Encode {
     // MARK: - Property
-    private let encode: (Value) throws -> Data
+    private let encode: any Encode<Value>
     
     // MARK: - Initializer
     public init<E: Encode>(_ encode: E) where E.Value == Value {
-        self.encode = { try encode.encode($0) }
-    }
-    
-    public init(_ encode: @escaping (Value) throws -> Data) {
         self.encode = encode
     }
     
     // MARK: - Public
     public func encode(_ value: Value) throws -> Data {
-        try encode(value)
+        try encode.encode(value)
     }
     
     // MARK: - Private
 }
 
-// MARK: - CodableEncoder
 public extension Encoder where Value: Encodable {
     static var codable: Self { Encoder(CodableEncode<Value>()) }
 }

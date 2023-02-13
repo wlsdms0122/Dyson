@@ -18,21 +18,23 @@ public extension Request {
     }
 }
 
-// MARK: - NoneRequest
 public extension Request where Self == NoneRequest {
     static var none: Self { NoneRequest() }
 }
 
-// MARK: - QueryRequest
-public extension Request where Self == QueryRequest {
-    static func query(_ parameter: [String: String]) -> Self {
+public extension Request {
+    static func query(
+        _ parameter: [String: String]
+    ) -> Self where Self == QueryRequest {
         QueryRequest(parameter)
     }
 }
 
-// MARK: - BodyRequest
 public extension Request {
-    static func body<Parameter>(_ parameter: Parameter, encoder: Encoder<Parameter>) -> Self where Self == BodyRequest<Parameter> {
+    static func body<Parameter>(
+        _ parameter: Parameter,
+        encoder: Encoder<Parameter>
+    ) -> Self where Self == BodyRequest<Parameter> {
         BodyRequest(parameter, encoder: encoder)
     }
 }

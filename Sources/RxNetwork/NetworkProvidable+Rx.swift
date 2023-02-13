@@ -9,16 +9,11 @@ import Foundation
 import Network
 import RxSwift
 
-public extension NetworkProvidable {
-    func request<T: Target>(_ target: T) -> Single<(Data?, URLResponse?)> {
+public extension NetworkProvider {
+    func request(_ target: some Target) -> Single<(Data, URLResponse)> {
         .create { [weak self] emitter in
-            let task = self?.request(target) { data, response, error in
-                if let error = error {
-                    emitter(.failure(error))
-                    return
-                }
-                
-                emitter(.success((data, response)))
+            let task = self?.request(target) {
+                emitter($0)
             }
             
             return Disposables.create {
