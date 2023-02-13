@@ -17,15 +17,21 @@ public protocol Target {
     var baseURL: String { get }
     var path: String { get }
     var method: HTTPMethod { get }
-    var task: Task { get }
+    var transaction: Transaction { get }
     
     var headers: HTTPHeaders { get }
     
-    var request: Request { get }
+    var request: any Request { get }
     var result: Mapper<Result> { get }
     var error: Mapper<Error> { get }
 }
 
 public extension Target {
-    var url: String { baseURL + path }
+    var url: URL? {
+        if #available(iOS 16.0, *) {
+            return URL(string:  baseURL)?.appending(path: path)
+        } else {
+            return URL(string: baseURL)?.appendingPathComponent(path)
+        }
+    }
 }

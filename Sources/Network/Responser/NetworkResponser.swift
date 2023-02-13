@@ -7,14 +7,14 @@
 
 import Foundation
 
-public protocol NetworkResponser: AnyObject {
-    var networkProvider: NetworkProvidable { get }
+public protocol NetworkResponser {
+    var provider: any NetworkProvider { get }
+    
+    init(provider: any NetworkProvider)
     
     func response<T: Target>(
         target: T,
-        data: Data?,
-        response: URLResponse?,
-        error: Error?,
+        result: Response,
         handler: (Result<T.Result, Error>) -> Void
     )
 }
@@ -23,25 +23,44 @@ public extension NetworkResponser {
     @discardableResult
     func request<T: Target>(
         _ target: T,
+        sessionTask: (any TargetSessionTask)? = nil,
+        progress: ((Progress) -> Void)? = nil,
+        requestModifier: ((URLRequest) -> URLRequest)? = nil,
         completion: @escaping (Result<T.Result, Error>) -> Void
-    ) -> URLSessionTask? {
-        request(target, progress: nil, completion: completion)
+    ) -> any SessionTask {
+        provider.request(
+            target,
+            sessionTask: sessionTask,
+            progress: progress,
+            requestModifier: requestModifier
+        ) {
+            response(
+                target: target,
+                result: $0,
+                handler: completion
+            )
+        }
     }
-    
+}
+
+public extension NetworkResponser {
     @discardableResult
     func request<T: Target>(
         _ target: T,
-        progress: ((Progress) -> Void)?,
-        completion: @escaping (Result<T.Result, Error>) -> Void
-    ) -> URLSessionTask? {
-        networkProvider.request(target, progress: progress) { [weak self] data, response, error in
-            self?.response(
-                target: target,
-                data: data,
-                response: response,
-                error: error,
-                handler: completion
-            )
+        sessionTask: (any TargetSessionTask)? = nil,
+        progress: ((Progress) -> Void)? = nil,
+        requestModifier: ((URLRequest) -> URLRequest)? = nil
+    ) async throws -> T.Result {
+        try await withUnsafeThrowingContinuation { continuation in
+            request(target) {
+                switch $0 {
+                case let .success(result):
+                    continuation.resume(returning: result)
+                    
+                case let .failure(error):
+                    continuation.resume(throwing: error)
+                }
+            }
         }
     }
 }

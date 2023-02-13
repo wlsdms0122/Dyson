@@ -11,9 +11,7 @@ public struct CodableMap<Value: Decodable>: Map {
     // MARK: - Property
     
     // MARK: - Initializer
-    public init() {
-        
-    }
+    public init() { }
     
     // MARK: - Public
     public func map(_ data: Data) throws -> Value {

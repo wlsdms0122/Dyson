@@ -8,8 +8,10 @@
 import Foundation
 
 public struct AuthorizationInterceptor: Interceptor {
+    // MARK: - Property
     private let token: () -> String?
     
+    // MARK: - Initializer
     public init(token: @escaping () -> String?) {
         self.token = token
     }
@@ -18,26 +20,25 @@ public struct AuthorizationInterceptor: Interceptor {
         self.init { token }
     }
     
-    public func request<T: Target>(
+    // MARK: - Public
+    public func request(
         _ request: URLRequest,
-        session: URLSession,
-        target: T
-    ) -> URLRequest {
-        guard let target = target as? Authorizable, target.needsAuth else { return request }
+        provider: any NetworkProvider,
+        target: some Target,
+        sessionTask: any TargetSessionTask,
+        completion: @escaping (Result<URLRequest, any Error>) -> Void
+    ) {
+        guard let target = target as? Authorizable,
+            target.needsAuth else {
+            completion(.success(request))
+            return
+        }
         
         var request = request
         request.setValue(token(), forHTTPHeaderField: "Authorization")
         
-        return request
+        completion(.success(request))
     }
     
-    public func response<T: Target>(
-        _ response: URLResponse?,
-        data: Data?,
-        error: Error?,
-        session: URLSession,
-        target: T
-    ) {
-        // Do nothing.
-    }
+    // MARK: - Private
 }

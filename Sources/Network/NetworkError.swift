@@ -8,11 +8,7 @@
 import Foundation
 
 public enum NetworkError: Error {
-    case notRegisteredResponser
-    case invalidURL(String)
-    case emptyResponse
-    case invalidStatusCode(Int)
-    case emptyData
+    case invalidURL
     case failedToParse(Error?)
     case unknown
 }

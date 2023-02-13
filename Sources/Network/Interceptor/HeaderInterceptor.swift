@@ -8,9 +8,11 @@
 import Foundation
 
 public struct HeaderInterceptor: Interceptor {
+    // MARK: - Property
     private let key: String
     private let value: () -> String?
     
+    // MARK: - Initializer
     public init(key: String, value: @escaping () -> String?) {
         self.key = key
         self.value = value
@@ -20,24 +22,19 @@ public struct HeaderInterceptor: Interceptor {
         self.init(key: key) { value }
     }
     
-    public func request<T: Target>(
+    // MARK: - Public
+    public func request(
         _ request: URLRequest,
-        session: URLSession,
-        target: T
-    ) -> URLRequest {
+        provider: any NetworkProvider,
+        target: some Target,
+        sessionTask: any TargetSessionTask,
+        completion: @escaping (Result<URLRequest, any Error>) -> Void
+    ) {
         var request = request
         request.setValue(value(), forHTTPHeaderField: key)
         
-        return request
+        completion(.success(request))
     }
     
-    public func response<T: Target>(
-        _ response: URLResponse?,
-        data: Data?,
-        error: Error?,
-        session: URLSession,
-        target: T
-    ) {
-        // Do nothing.
-    }
+    // MARK: - Private
 }

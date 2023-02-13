@@ -8,17 +8,41 @@
 import Foundation
 
 public protocol Interceptor {
-    func request<T: Target>(
+    func request(
         _ request: URLRequest,
-        session: URLSession,
-        target: T
-    ) -> URLRequest
-    
-    func response<T: Target>(
-        _ response: URLResponse?,
-        data: Data?,
-        error: Error?,
-        session: URLSession,
-        target: T
+        provider: any NetworkProvider,
+        target: some Target,
+        sessionTask: any TargetSessionTask,
+        completion: @escaping (Result<URLRequest, any Error>) -> Void
     )
+    
+    func response(
+        _ response: Response,
+        provider: any NetworkProvider,
+        target: some Target,
+        sessionTask: any TargetSessionTask,
+        completion: @escaping (Result<Response, any Error>) -> Void
+    )
+}
+
+public extension Interceptor {
+    func request(
+        _ request: URLRequest,
+        provider: any NetworkProvider,
+        target: some Target,
+        sessionTask: any TargetSessionTask,
+        completion: @escaping (Result<URLRequest, any Error>) -> Void
+    ) {
+        completion(.success(request))
+    }
+    
+    func response(
+        _ response: Response,
+        provider: any NetworkProvider,
+        target: some Target,
+        sessionTask: any TargetSessionTask,
+        completion: @escaping (Result<Response, any Error>) -> Void
+    ) {
+        completion(.success(response))
+    }
 }

@@ -6,39 +6,45 @@
 //
 
 import XCTest
-import Quick
-import Nimble
+import UIKit
 @testable import Network
 
-final class NetworkTests: QuickSpec {
-    override func spec() {
-        describe("NetworkResponser에") {
-            let networkResponser: NetworkResponser = GitHubNetworkResponser(networkProvider: NetworkProvider())
-            
-            context("Target으로 요청하면") {
-                let target = GitHubTarget(.init(id: "wlsdms0122"))
-                
-                it("응답값이 와야한다") {
-                    // Given
-                    
-                    // When
-                    
-                    // Then
-                    waitUntil { done in
-                        networkResponser.request(target) { result in
-                            switch result {
-                            case .success:
-                                break
-                                
-                            case .failure:
-                                fail()
-                            }
-                            
-                            done()
-                        }
-                    }
-                }
+final class NetworkTests: XCTestCase {
+    // MARK: - Property
+    private var accessToken: String?
+    
+    private lazy var provider: any NetworkProvider = URLNetworkProvider(
+        interceptors: [
+            LogInterceptor(),
+            AuthorizationInterceptor { [weak self] in
+                guard let accessToken = self?.accessToken else { return nil }
+                return "Bearer \(accessToken)"
+            },
+            JWTInterceptor { [weak self] in
+                self?.accessToken = $0
             }
-        }
+        ]
+    )
+    
+    // MARK: - Lifecycle
+    override func setUp() {
+        
+    }
+    
+    override func tearDown() {
+        
+    }
+    
+    // MARK: - Test
+    func test_that_network() async throws {
+        // Given
+        let listTarget = ListTarget(.init())
+        
+        // When
+        let _ = try await provider
+            .reponser(NTNetworkResponser.self)
+            .request(listTarget)
+        
+        // Then
     }
 }
