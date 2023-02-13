@@ -11,9 +11,10 @@ public protocol NetworkProvider: AnyObject {
     @discardableResult
     func request(
         _ target: some Target,
+        sessionTask: (any TargetSessionTask)?,
         progress: ((Progress) -> Void)?,
         requestModifier: ((URLRequest) -> URLRequest)?,
-        completion: @escaping (Result<(Data, URLResponse), any Error>) -> Void
+        completion: @escaping (Response) -> Void
     ) -> any SessionTask
 }
 
@@ -21,12 +22,14 @@ public extension NetworkProvider {
     @discardableResult
     func request(
         _ target: some Target,
+        sessionTask: (any TargetSessionTask)? = nil,
         progress: ((Progress) -> Void)? = nil,
         requestModifier: ((URLRequest) -> URLRequest)? = nil,
-        completion: @escaping (Result<(Data, URLResponse), any Error>) -> Void
+        completion: @escaping (Response) -> Void
     ) -> any SessionTask {
         request(
             target,
+            sessionTask: sessionTask,
             progress: progress,
             requestModifier: requestModifier,
             completion: completion
@@ -39,12 +42,14 @@ public extension NetworkProvider {
     @discardableResult
     func request(
         _ target: some Target,
+        sessionTask: (any TargetSessionTask)? = nil,
         progress: ((Progress) -> Void)? = nil,
         requestModifier: ((URLRequest) -> URLRequest)? = nil
     ) async throws -> (Data, URLResponse) {
         try await withUnsafeThrowingContinuation { continuation in
             request(
                 target,
+                sessionTask: sessionTask,
                 progress: progress,
                 requestModifier: requestModifier
             ) { result in
@@ -57,5 +62,11 @@ public extension NetworkProvider {
                 }
             }
         }
+    }
+}
+
+public extension NetworkProvider {
+    func reponser<Responser: NetworkResponser>(_ responser: Responser.Type) -> Responser {
+        responser.init(provider: self)
     }
 }

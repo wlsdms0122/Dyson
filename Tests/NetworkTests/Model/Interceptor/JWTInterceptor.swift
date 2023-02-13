@@ -16,10 +16,10 @@ struct JWTInterceptor: Interceptor {
     }
     
     func response(
-        _ response: Result<(Data, URLResponse), any Error>,
+        _ response: Response,
         provider: any NetworkProvider,
         target: some Target,
-        sessionTask: TargetSessionTask,
+        sessionTask: any TargetSessionTask,
         completion: @escaping (Result<Response, any Error>) -> Void
     ) {
         guard case let .success((data, _)) = response else {
@@ -37,25 +37,32 @@ struct JWTInterceptor: Interceptor {
             return
         }
         
-        sessionTask {
-            let authrefreshTarget = AuthRefreshTarget(.init())
-            
-            return NTNetworkResponser(provider: provider)
-                .request(authrefreshTarget) {
-                    switch $0 {
-                    case let .success(result):
-                        accessToken(result.accessToken)
-                        
-                        sessionTask {
-                            provider.request(target) {
-                                completion(.success($0))
-                            }
-                        }
-                        
-                    case let .failure(error):
-                        completion(.failure(error))
-                    }
-                }
+        let retryCount = sessionTask.state(
+            forKey: "retryCount",
+            to: Int.self
+        ) ?? 0
+        
+        guard retryCount == 0 else {
+            completion(.failure(NetworkError.unknown))
+            return
         }
+        
+        sessionTask.setState(retryCount + 1, forKey: "retryCount")
+        let authrefreshTarget = AuthRefreshTarget(.init())
+        
+        NTNetworkResponser(provider: provider)
+            .request(authrefreshTarget, sessionTask: sessionTask) {
+                switch $0 {
+                case let .success(result):
+                    accessToken(result.accessToken)
+                    
+                    provider.request(target, sessionTask: sessionTask) {
+                        completion(.success($0))
+                    }
+                    
+                case let .failure(error):
+                    completion(.failure(error))
+                }
+            }
     }
 }

@@ -30,3 +30,17 @@ public extension SessionTask {
         tasks.last?.cancel()
     }
 }
+
+public protocol TargetSessionTask: SessionTask {
+    var state: [String: Any] { get }
+    
+    func setState(_ state: Any, forKey key: String)
+    func state<T>(forKey key: String, to type: T.Type) -> T?
+    func append(_ task: any SessionTask)
+}
+
+public extension TargetSessionTask {
+    func state(forKey key: String) -> Any? {
+        state(forKey: key, to: Any.self)
+    }
+}

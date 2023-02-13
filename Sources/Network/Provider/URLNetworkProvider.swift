@@ -29,11 +29,12 @@ open class URLNetworkProvider: NetworkProvider {
     @discardableResult
     public func request<T: Target>(
         _ target: T,
+        sessionTask: (any TargetSessionTask)?,
         progress: ((Progress) -> Void)?,
         requestModifier: ((URLRequest) -> URLRequest)?,
-        completion: @escaping (Result<(Data, URLResponse), any Error>) -> Void
+        completion: @escaping (Response) -> Void
     ) -> any SessionTask {
-        let task = TargetSessionTask()
+        let task = sessionTask ?? ContainerSessionTask()
         
         let headers = defaultHeaders.merging(target.headers) { _, new in new }
         
@@ -82,7 +83,7 @@ open class URLNetworkProvider: NetworkProvider {
     
     // MARK: - Private
     private func request(
-        task: TargetSessionTask,
+        task: any TargetSessionTask,
         target: some Target,
         headers: HTTPHeaders,
         provider: any NetworkProvider,
@@ -129,13 +130,13 @@ open class URLNetworkProvider: NetworkProvider {
     }
     
     private func dataTask(
-        task: TargetSessionTask,
+        task: any TargetSessionTask,
         target: some Target,
         request: URLRequest,
         provider: any NetworkProvider,
         interceptors: [any Interceptor],
         progress: ((Progress) -> Void)?,
-        completion: @escaping (Result<(Data, URLResponse), any Error>) -> Void
+        completion: @escaping (Response) -> Void
     ) {
         let sessionTask = session.dataTask(with: request) { data, response, error in
             let result: Result<(Data, URLResponse), any Error>

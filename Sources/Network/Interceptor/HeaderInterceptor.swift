@@ -27,7 +27,7 @@ public struct HeaderInterceptor: Interceptor {
         _ request: URLRequest,
         provider: any NetworkProvider,
         target: some Target,
-        sessionTask: TargetSessionTask,
+        sessionTask: any TargetSessionTask,
         completion: @escaping (Result<URLRequest, any Error>) -> Void
     ) {
         var request = request

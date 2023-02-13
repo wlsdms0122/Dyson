@@ -7,24 +7,24 @@
 
 import Foundation
 
-class DataSessionTask: SessionTask {
+open class DataSessionTask: SessionTask {
     // MARK: - Property
-    let tasks: [any SessionTask] = []
+    public let tasks: [any SessionTask] = []
     
-    let request: URLRequest?
-    let sessionTask: URLSessionTask?
+    public let requests: [URLRequest]
+    public let sessionTasks: [URLSessionTask]
     
     // MARK: - Initialzer
-    init(
+    public init(
         request: URLRequest,
         sessionTask: URLSessionTask
     ) {
-        self.request = request
-        self.sessionTask = sessionTask
+        self.requests = [request]
+        self.sessionTasks = [sessionTask]
     }
     
     // MARK: - Public
-    func cancel() {
+    open func cancel() {
         sessionTask?.cancel()
     }
     

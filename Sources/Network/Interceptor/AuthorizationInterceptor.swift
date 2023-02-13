@@ -25,7 +25,7 @@ public struct AuthorizationInterceptor: Interceptor {
         _ request: URLRequest,
         provider: any NetworkProvider,
         target: some Target,
-        sessionTask: TargetSessionTask,
+        sessionTask: any TargetSessionTask,
         completion: @escaping (Result<URLRequest, any Error>) -> Void
     ) {
         guard let target = target as? Authorizable,

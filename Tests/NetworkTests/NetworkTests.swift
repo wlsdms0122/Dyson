@@ -13,19 +13,17 @@ final class NetworkTests: XCTestCase {
     // MARK: - Property
     private var accessToken: String?
     
-    private lazy var networkResponser: any NetworkResponser = NTNetworkResponser(
-        provider: URLNetworkProvider(
-            interceptors: [
-                LogInterceptor(),
-                AuthorizationInterceptor { [weak self] in
-                    guard let accessToken = self?.accessToken else { return nil }
-                    return "Bearer \(accessToken)"
-                },
-                JWTInterceptor { [weak self] in
-                    self?.accessToken = $0
-                }
-            ]
-        )
+    private lazy var provider: any NetworkProvider = URLNetworkProvider(
+        interceptors: [
+            LogInterceptor(),
+            AuthorizationInterceptor { [weak self] in
+                guard let accessToken = self?.accessToken else { return nil }
+                return "Bearer \(accessToken)"
+            },
+            JWTInterceptor { [weak self] in
+                self?.accessToken = $0
+            }
+        ]
     )
     
     // MARK: - Lifecycle
@@ -43,7 +41,9 @@ final class NetworkTests: XCTestCase {
         let listTarget = ListTarget(.init())
         
         // When
-        let _ = try await networkResponser.request(listTarget)
+        let _ = try await provider
+            .reponser(NTNetworkResponser.self)
+            .request(listTarget)
         
         // Then
     }
