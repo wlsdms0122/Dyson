@@ -66,7 +66,7 @@ public extension NetworkProvider {
 }
 
 public extension NetworkProvider {
-    func reponser<Responser: NetworkResponser>(_ responser: Responser.Type) -> Responser {
+    func responser<Responser: NetworkResponser>(_ responser: Responser.Type) -> Responser {
         responser.init(provider: self)
     }
 }
