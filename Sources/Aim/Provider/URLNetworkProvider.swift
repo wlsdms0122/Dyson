@@ -44,7 +44,22 @@ public struct URLNetworkProvider: NetworkProvider {
         from data: Data,
         completion: @escaping (Result<(Data, URLResponse), any Error>) -> Void
     ) -> DataSessionTask {
-        fatalError()
+        let sessionTask = session.uploadTask(with: request, from: data) { data, response, error in
+            let result: Result<(Data, URLResponse), any Error>
+            if let error {
+                result = .failure(error)
+            } else if let data, let response {
+                result = .success((data, response))
+            } else {
+                result = .failure(NetworkError.unknown)
+            }
+            
+            completion(result)
+        }
+        
+        sessionTask.resume()
+        
+        return .init(request: request, sessionTask: sessionTask)
     }
     
     public func downloadTask(
