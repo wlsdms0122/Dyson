@@ -7,7 +7,7 @@
 
 import Foundation
 
-open class DataSessionTask: SessionTask {
+final public class DataSessionTask: SessionTask {
     // MARK: - Property
     public var state = SessionTaskState()
     
@@ -36,7 +36,7 @@ open class DataSessionTask: SessionTask {
     }
     
     // MARK: - Public
-    open func cancel() {
+    public func cancel() {
         sessionTask?.cancel()
     }
     

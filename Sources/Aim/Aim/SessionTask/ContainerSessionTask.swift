@@ -7,7 +7,7 @@
 
 import Foundation
 
-open class ContainerSessionTask: SessionTask {
+final public class ContainerSessionTask: SessionTask {
     // MARK: - Property
     public var state: SessionTaskState
     
@@ -19,11 +19,11 @@ open class ContainerSessionTask: SessionTask {
     }
     
     // MARK: - Public
-    open func callAsFunction(_ child: () -> any SessionTask) {
+    public func callAsFunction(_ child: () -> any SessionTask) {
         addChild(child())
     }
     
-    open func addChild(_ task: any SessionTask) {
+    public func addChild(_ task: any SessionTask) {
         state.merge(task.state)
         task.state = state
         
