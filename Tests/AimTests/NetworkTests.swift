@@ -14,6 +14,7 @@ final class NetworkTests: XCTestCase {
     
     private lazy var aim = Aim(
         provider: .url(),
+        responser: NTResponser(),
         interceptors: [
             AuthorizationInterceptor { [weak self] in
                 guard let accessToken = self?.accessToken else { return nil }
@@ -23,8 +24,7 @@ final class NetworkTests: XCTestCase {
             JWTInterceptor { [weak self] in
                 self?.accessToken = $0
             }
-        ],
-        responser: NTResponser()
+        ]
     )
     
     // MARK: - Lifecycle

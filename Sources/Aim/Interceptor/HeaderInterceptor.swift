@@ -28,12 +28,12 @@ public struct HeaderInterceptor: Interceptor {
         aim: Aim,
         target: some Target,
         sessionTask: ContainerSessionTask,
-        completion: @escaping (Result<URLRequest, any Error>) -> Void
+        continuation: Continuation<URLRequest>
     ) {
         var request = request
         request.setValue(value(), forHTTPHeaderField: key)
         
-        completion(.success(request))
+        continuation(request)
     }
     
     // MARK: - Private

@@ -20,7 +20,7 @@ struct LogInterceptor: Interceptor {
         aim: Aim,
         target: some Target,
         sessionTask: ContainerSessionTask,
-        completion: @escaping (Result<URLRequest, any Error>) -> Void
+        continuation: Continuation<URLRequest>
     ) {
         print("""
             
@@ -34,7 +34,7 @@ struct LogInterceptor: Interceptor {
             """
         )
         
-        completion(.success(request))
+        continuation(request)
     }
     
     func response(
@@ -42,7 +42,7 @@ struct LogInterceptor: Interceptor {
         aim: Aim,
         target: some Target,
         sessionTask: ContainerSessionTask,
-        completion: @escaping (Result<Result<(Data, URLResponse), any Error>, any Error>) -> Void
+        continuation: Continuation<Result<(Data, URLResponse), any Error>>
     ) {
         var data: Data?
         var httpResponse: HTTPURLResponse?
@@ -69,7 +69,7 @@ struct LogInterceptor: Interceptor {
             """
         )
         
-        completion(.success(response))
+        continuation(response)
     }
     
     // MARK: - Public

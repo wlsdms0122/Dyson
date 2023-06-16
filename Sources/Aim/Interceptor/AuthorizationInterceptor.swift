@@ -26,18 +26,18 @@ public struct AuthorizationInterceptor: Interceptor {
         aim: Aim,
         target: some Target,
         sessionTask: ContainerSessionTask,
-        completion: @escaping (Result<URLRequest, any Error>) -> Void
+        continuation: Continuation<URLRequest>
     ) {
         guard let target = target as? Authorizable,
             target.needsAuth else {
-            completion(.success(request))
+            continuation(request)
             return
         }
         
         var request = request
         request.setValue(token(), forHTTPHeaderField: "Authorization")
         
-        completion(.success(request))
+        continuation(request)
     }
     
     // MARK: - Private

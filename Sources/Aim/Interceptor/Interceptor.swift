@@ -13,7 +13,7 @@ public protocol Interceptor {
         aim: Aim,
         target: some Target,
         sessionTask: ContainerSessionTask,
-        completion: @escaping (Result<URLRequest, any Error>) -> Void
+        continuation: Continuation<URLRequest>
     )
     
     func response(
@@ -21,15 +21,15 @@ public protocol Interceptor {
         aim: Aim,
         target: some Target,
         sessionTask: ContainerSessionTask,
-        completion: @escaping (Result<Result<(Data, URLResponse), any Error>, any Error>) -> Void
+        continuation: Continuation<Result<(Data, URLResponse), any Error>>
     )
     
-    func data<T: Target>(
-        _ data: Result<T.Result, any Error>,
+    func result<T: Target>(
+        _ result: Result<T.Result, any Error>,
         aim: Aim,
         target: T,
         sessionTask: ContainerSessionTask,
-        completion: @escaping (Result<Result<T.Result, any Error>, any Error>) -> Void
+        continuation: Continuation<Result<T.Result, any Error>>
     )
 }
 
@@ -39,9 +39,9 @@ public extension Interceptor {
         aim: Aim,
         target: some Target,
         sessionTask: ContainerSessionTask,
-        completion: @escaping (Result<URLRequest, any Error>) -> Void
+        continuation: Continuation<URLRequest>
     ) {
-        completion(.success(request))
+        continuation(request)
     }
     
     func response(
@@ -49,18 +49,18 @@ public extension Interceptor {
         aim: Aim,
         target: some Target,
         sessionTask: ContainerSessionTask,
-        completion: @escaping (Result<Result<(Data, URLResponse), any Error>, any Error>) -> Void
+        continuation: Continuation<Result<(Data, URLResponse), any Error>>
     ) {
-        completion(.success(response))
+        continuation(response)
     }
     
-    func data<T: Target>(
-        _ data: Result<T.Result, any Error>,
+    func result<T: Target>(
+        _ result: Result<T.Result, any Error>,
         aim: Aim,
         target: T,
         sessionTask: ContainerSessionTask,
-        completion: @escaping (Result<Result<T.Result, any Error>, any Error>) -> Void
+        continuation: Continuation<Result<T.Result, any Error>>
     ) {
-        completion(.success(data))
+        continuation(data)
     }
 }

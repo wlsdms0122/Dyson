@@ -11,22 +11,22 @@ open class Aim {
     // MARK: - Property
     private let provider: any NetworkProvider
     
-    open var defaultHeaders: HTTPHeaders
-    open var interceptors: [any Interceptor]
+    public let responser: any Responser
     
-    open var responser: any Responser
+    public let defaultHeaders: HTTPHeaders
+    public let interceptors: [any Interceptor]
     
     // MARK: - Initializer
     public init(
         provider: any NetworkProvider,
+        responser: any Responser,
         defaultHeaders: HTTPHeaders = [:],
-        interceptors: [any Interceptor] = [],
-        responser: any Responser
+        interceptors: [any Interceptor] = []
     ) {
         self.provider = provider
+        self.responser = responser
         self.defaultHeaders = defaultHeaders
         self.interceptors = interceptors
-        self.responser = responser
     }
     
     // MARK: - Public
@@ -37,18 +37,101 @@ open class Aim {
         requestModifier: ((URLRequest) -> URLRequest)? = nil,
         completion: @escaping (Result<(Data, URLResponse), any Error>) -> Void
     ) -> any SessionTask {
-        let task = ContainerSessionTask()
-        
+        // Request network with target.
         request(
-            task: task,
             target: target,
             aim: self,
             defaultHeaders: defaultHeaders,
             interceptors: interceptors,
             requestModifier: requestModifier
-        ) { [weak self] result in
+        ) { [weak self] task, response in
             guard let self else {
                 completion(.failure(NetworkError.unknown))
+                return
+            }
+            
+            // Handle response.
+            self.response(
+                response,
+                task: task,
+                target: target,
+                aim: self,
+                interceptors: self.interceptors,
+                completion: completion
+            )
+        }
+    }
+    
+    @discardableResult
+    open func request<T: Target>(
+        _ target: T,
+        progress: ((Progress) -> Void)? = nil,
+        requestModifier: ((URLRequest) -> URLRequest)? = nil,
+        completion: @escaping (Result<T.Result, any Error>) -> Void
+    ) -> any SessionTask {
+        // Request network with target.
+        request(
+            target: target,
+            aim: self,
+            defaultHeaders: defaultHeaders,
+            interceptors: interceptors,
+            requestModifier: requestModifier
+        ) { [weak self] task, response in
+            guard let self else {
+                completion(.failure(NetworkError.unknown))
+                return
+            }
+            
+            // Handle response.
+            self.response(
+                response,
+                task: task,
+                target: target,
+                aim: self,
+                interceptors: self.interceptors
+            ) { [weak self] response in
+                guard let self else {
+                    completion(.failure(NetworkError.unknown))
+                    return
+                }
+                
+                // Responser handle response.
+                self.response(
+                    response,
+                    responser: self.responser,
+                    task: task,
+                    target: target,
+                    aim: self,
+                    interceptors: self.interceptors,
+                    completion: completion
+                )
+            }
+        }
+    }
+    
+    // MARK: - Private
+    private func request(
+        target: some Target,
+        aim: Aim,
+        defaultHeaders: HTTPHeaders,
+        interceptors: [any Interceptor],
+        requestModifier: ((URLRequest) -> URLRequest)?,
+        completion: @escaping (ContainerSessionTask, Result<(Data, URLResponse), any Error>) -> Void
+    ) -> any SessionTask {
+        // Create new container session task for current request.
+        let task = ContainerSessionTask()
+        
+        // Make request.
+        request(
+            target: target,
+            task: task,
+            aim: aim,
+            defaultHeaders: defaultHeaders,
+            interceptors: interceptors,
+            requestModifier: requestModifier
+        ) { [weak self] result in
+            guard let self else {
+                completion(task, .failure(NetworkError.unknown))
                 return
             }
             
@@ -57,53 +140,22 @@ open class Aim {
                 // Perform request
                 task {
                     self.request(request, with: target) { response in
-                        self.response(
-                            response,
-                            task: task,
-                            target: target,
-                            aim: self,
-                            interceptors: self.interceptors,
-                            completion: completion
-                        )
+                        completion(task, response)
                     }
                 }
                 
             case let .failure(error):
                 // Pre-request failed.
-                completion(.failure(error))
+                completion(task, .failure(error))
             }
         }
         
         return task
     }
     
-    @discardableResult
-    open func response<T: Target>(
-        _ target: T,
-        progress: ((Progress) -> Void)? = nil,
-        requestModifier: ((URLRequest) -> URLRequest)? = nil,
-        completion: @escaping (Result<T.Result, any Error>) -> Void
-    ) -> any SessionTask {
-        let responser = responser
-        
-        return request(
-            target,
-            progress: progress,
-            requestModifier: requestModifier
-        ) { response in
-            do {
-                let result = try responser.response(response, target: target)
-                completion(.success(result))
-            } catch {
-                completion(.failure(error))
-            }
-        }
-    }
-    
-    // MARK: - Private
     private func request(
-        task: ContainerSessionTask,
         target: some Target,
+        task: ContainerSessionTask,
         aim: Aim,
         defaultHeaders: HTTPHeaders,
         interceptors: [any Interceptor],
@@ -111,6 +163,7 @@ open class Aim {
         completion: @escaping (Result<URLRequest, any Error>) -> Void
     ) {
         guard let url = target.url else {
+            // Validate URL.
             completion(.failure(NetworkError.invalidURL))
             return
         }
@@ -123,6 +176,7 @@ open class Aim {
             // Header
             request.allHTTPHeaderFields = defaultHeaders.merging(target.headers) { _, new in new }
             
+            // Traversal all request interceptors before request.
             intercept(
                 interceptors,
                 initialValue: request
@@ -132,13 +186,14 @@ open class Aim {
                     aim: aim,
                     target: target,
                     sessionTask: task,
-                    completion: completion
+                    continuation: .init(completion)
                 )
             } completion: { result in
                 switch result {
                 case var .success(request):
                     // Modify the request after the interceptor job completes.
                     request = requestModifier?(request) ?? request
+                    
                     completion(.success(request))
                     
                 case let .failure(error):
@@ -185,7 +240,7 @@ open class Aim {
         interceptors: [any Interceptor],
         completion: @escaping (Result<(Data, URLResponse), any Error>) -> Void
     ) {
-        // Interceptors process response before completion.
+        // Traversal all response interceptors after request.
         intercept(
             interceptors,
             initialValue: response
@@ -195,7 +250,7 @@ open class Aim {
                 aim: aim,
                 target: target,
                 sessionTask: task,
-                completion: completion
+                continuation: .init(completion)
             )
         } completion: { result in
             switch result {
@@ -217,23 +272,25 @@ open class Aim {
         interceptors: [any Interceptor],
         completion: @escaping (Result<T.Result, any Error>) -> Void
     ) {
+        // Process network response through an reponser.
         let result: Result<T.Result, any Error>
         do {
             result = .success(try responser.response(response, target: target))
         } catch {
             result = .failure(error)
         }
-            
+        
+        // Traversal all result interceptors.
         intercept(
             interceptors,
             initialValue: result
         ) { interceptor, response, completion in
-            interceptor.data(
+            interceptor.result(
                 response,
                 aim: aim,
                 target: target,
                 sessionTask: task,
-                completion: completion
+                continuation: .init(completion)
             )
         } completion: { result in
             switch result {
@@ -260,55 +317,6 @@ open class Aim {
             }
         } completion: { result in
             completion(result)
-        }
-    }
-}
-
-// MARK: - async/await
-public extension Aim {
-    @discardableResult
-    func request(
-        _ target: some Target,
-        progress: ((Progress) -> Void)? = nil,
-        requestModifier: ((URLRequest) -> URLRequest)? = nil
-    ) async throws -> (Data, URLResponse) {
-        try await withUnsafeThrowingContinuation { continuation in
-            request(
-                target,
-                progress: progress,
-                requestModifier: requestModifier
-            ) { result in
-                switch result {
-                case let .success(result):
-                    continuation.resume(returning: result)
-                    
-                case let .failure(error):
-                    continuation.resume(throwing: error)
-                }
-            }
-        }
-    }
-    
-    @discardableResult
-    func response<T: Target>(
-        _ target: T,
-        progress: ((Progress) -> Void)? = nil,
-        requestModifier: ((URLRequest) -> URLRequest)? = nil
-    ) async throws -> T.Result {
-        try await withUnsafeThrowingContinuation { continuation in
-            response(
-                target,
-                progress: progress,
-                requestModifier: requestModifier
-            ) { result in
-                switch result {
-                case let .success(result):
-                    continuation.resume(returning: result)
-                    
-                case let .failure(error):
-                    continuation.resume(throwing: error)
-                }
-            }
         }
     }
 }
