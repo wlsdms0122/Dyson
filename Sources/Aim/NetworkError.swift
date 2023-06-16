@@ -9,8 +9,6 @@ import Foundation
 
 public enum NetworkError: Error {
     case invalidURL
-    case failedToValidate
-    case failedToValidateFromStatusCode(Int)
     case failedToParse(Error?)
     case unknown
 }
