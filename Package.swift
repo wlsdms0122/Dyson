@@ -4,39 +4,32 @@
 import PackageDescription
 
 let package = Package(
-    name: "Network",
+    name: "Aim",
     platforms: [
-        .iOS(.v13)
+        .iOS(.v13),
+        .macOS(.v13)
     ],
     products: [
         .library(
-            name: "Network",
-            targets: ["Network"]
-        ),
-        .library(
-            name: "RxNetwork",
-            targets: ["RxNetwork"]
+            name: "Aim",
+            targets: ["Aim"]
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/ReactiveX/RxSwift", .upToNextMajor(from: "6.0.0"))
+        
     ],
     targets: [
         .target(
-            name: "Network",
+            name: "Aim",
             dependencies: []
         ),
-        .target(
-            name: "RxNetwork",
-            dependencies: [
-                "Network",
-                "RxSwift"
-            ]
-        ),
         .testTarget(
-            name: "NetworkTests",
+            name: "AimTests",
             dependencies: [
-                "Network"
+                "Aim"
+            ],
+            resources: [
+                .process("Asset")
             ]
         )
     ]
