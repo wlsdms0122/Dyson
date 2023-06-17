@@ -10,13 +10,13 @@ import Foundation
 public extension Aim {
     @discardableResult
     func request(
-        _ target: some Target,
+        _ spec: some Spec,
         progress: ((Progress) -> Void)? = nil,
         requestModifier: ((URLRequest) -> URLRequest)? = nil
     ) async throws -> (Data, URLResponse) {
         try await withUnsafeThrowingContinuation { continuation in
             request(
-                target,
+                spec,
                 progress: progress,
                 requestModifier: requestModifier
             ) { result in
@@ -32,14 +32,14 @@ public extension Aim {
     }
     
     @discardableResult
-    func response<T: Target>(
-        _ target: T,
+    func response<S: Spec>(
+        _ spec: S,
         progress: ((Progress) -> Void)? = nil,
         requestModifier: ((URLRequest) -> URLRequest)? = nil
-    ) async throws -> T.Result {
+    ) async throws -> S.Result {
         try await withUnsafeThrowingContinuation { continuation in
             request(
-                target,
+                spec,
                 progress: progress,
                 requestModifier: requestModifier
             ) { result in

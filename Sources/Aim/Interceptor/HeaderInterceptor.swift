@@ -26,7 +26,7 @@ public struct HeaderInterceptor: Interceptor {
     public func request(
         _ request: URLRequest,
         aim: Aim,
-        target: some Target,
+        spec: some Spec,
         sessionTask: any SessionTask,
         continuation: Continuation<URLRequest>
     ) {

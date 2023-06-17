@@ -24,12 +24,12 @@ public struct AuthorizationInterceptor: Interceptor {
     public func request(
         _ request: URLRequest,
         aim: Aim,
-        target: some Target,
+        spec: some Spec,
         sessionTask: any SessionTask,
         continuation: Continuation<URLRequest>
     ) {
-        guard let target = target as? Authorizable,
-            target.needsAuth else {
+        guard let spec = spec as? Authorizable,
+            spec.needsAuth else {
             continuation(request)
             return
         }

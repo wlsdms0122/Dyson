@@ -8,8 +8,8 @@
 import Foundation
 
 public protocol Responser {
-    func response<T: Target>(
+    func response<S: Spec>(
         _ response: Result<(Data, URLResponse), any Error>,
-        target: T
-    ) throws -> T.Result
+        spec: S
+    ) throws -> S.Result
 }

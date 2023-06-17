@@ -11,7 +11,7 @@ public protocol Interceptor {
     func request(
         _ request: URLRequest,
         aim: Aim,
-        target: some Target,
+        spec: some Spec,
         sessionTask: any SessionTask,
         continuation: Continuation<URLRequest>
     )
@@ -19,17 +19,17 @@ public protocol Interceptor {
     func response(
         _ response: Result<(Data, URLResponse), any Error>,
         aim: Aim,
-        target: some Target,
+        spec: some Spec,
         sessionTask: any SessionTask,
         continuation: Continuation<Result<(Data, URLResponse), any Error>>
     )
     
-    func result<T: Target>(
-        _ result: Result<T.Result, any Error>,
+    func result<S: Spec>(
+        _ result: Result<S.Result, any Error>,
         aim: Aim,
-        target: T,
+        spec: S,
         sessionTask: any SessionTask,
-        continuation: Continuation<Result<T.Result, any Error>>
+        continuation: Continuation<Result<S.Result, any Error>>
     )
 }
 
@@ -37,7 +37,7 @@ public extension Interceptor {
     func request(
         _ request: URLRequest,
         aim: Aim,
-        target: some Target,
+        spec: some Spec,
         sessionTask: any SessionTask,
         continuation: Continuation<URLRequest>
     ) {
@@ -47,19 +47,19 @@ public extension Interceptor {
     func response(
         _ response: Result<(Data, URLResponse), any Error>,
         aim: Aim,
-        target: some Target,
+        spec: some Spec,
         sessionTask: any SessionTask,
         continuation: Continuation<Result<(Data, URLResponse), any Error>>
     ) {
         continuation(response)
     }
     
-    func result<T: Target>(
-        _ result: Result<T.Result, any Error>,
+    func result<S: Spec>(
+        _ result: Result<S.Result, any Error>,
         aim: Aim,
-        target: T,
+        spec: S,
         sessionTask: any SessionTask,
-        continuation: Continuation<Result<T.Result, any Error>>
+        continuation: Continuation<Result<S.Result, any Error>>
     ) {
         continuation(result)
     }

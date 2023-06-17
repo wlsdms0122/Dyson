@@ -1,5 +1,5 @@
 //
-//  Target.swift
+//  Spec.swift
 //  
 //
 //  Created by jsilver on 2022/01/09.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol Target {
+public protocol Spec {
     associatedtype Parameter
     associatedtype Result
     associatedtype Error: Swift.Error
@@ -26,7 +26,7 @@ public protocol Target {
     var error: Mapper<Error> { get }
 }
 
-public extension Target {
+public extension Spec {
     var url: URL? {
         if #available(iOS 16.0, *) {
             return URL(string:  baseURL)?.appending(path: path)

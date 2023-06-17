@@ -11,7 +11,7 @@ public protocol SessionTask: AnyObject {
     var state: SessionTaskState { get set }
     
     var tasks: [any SessionTask] { get }
-    var targets: [any Target] { get }
+    var specs: [any Spec] { get }
     
     var requests: [URLRequest] { get }
     var request: URLRequest? { get }
@@ -24,7 +24,7 @@ public protocol SessionTask: AnyObject {
 }
 
 public extension SessionTask {
-    var targets: [any Target] { tasks.flatMap(\.targets) }
+    var specs: [any Spec] { tasks.flatMap(\.specs) }
     
     var requests: [URLRequest] { tasks.flatMap(\.requests) }
     var request: URLRequest? { requests.last }

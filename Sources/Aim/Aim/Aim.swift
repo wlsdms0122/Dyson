@@ -32,14 +32,14 @@ open class Aim {
     // MARK: - Public
     @discardableResult
     open func request(
-        _ target: some Target,
+        _ spec: some Spec,
         progress: ((Progress) -> Void)? = nil,
         requestModifier: ((URLRequest) -> URLRequest)? = nil,
         completion: @escaping (Result<(Data, URLResponse), any Error>) -> Void
     ) -> any SessionTask {
-        // Request network with target.
+        // Request network with spec.
         request(
-            target: target,
+            spec: spec,
             aim: self,
             defaultHeaders: defaultHeaders,
             interceptors: interceptors,
@@ -54,7 +54,7 @@ open class Aim {
             self.response(
                 response,
                 task: task,
-                target: target,
+                spec: spec,
                 aim: self,
                 interceptors: self.interceptors,
                 completion: completion
@@ -63,15 +63,15 @@ open class Aim {
     }
     
     @discardableResult
-    open func request<T: Target>(
-        _ target: T,
+    open func request<S: Spec>(
+        _ spec: S,
         progress: ((Progress) -> Void)? = nil,
         requestModifier: ((URLRequest) -> URLRequest)? = nil,
-        completion: @escaping (Result<T.Result, any Error>) -> Void
+        completion: @escaping (Result<S.Result, any Error>) -> Void
     ) -> any SessionTask {
-        // Request network with target.
+        // Request network with spec.
         request(
-            target: target,
+            spec: spec,
             aim: self,
             defaultHeaders: defaultHeaders,
             interceptors: interceptors,
@@ -86,7 +86,7 @@ open class Aim {
             self.response(
                 response,
                 task: task,
-                target: target,
+                spec: spec,
                 aim: self,
                 interceptors: self.interceptors
             ) { [weak self] response in
@@ -100,7 +100,7 @@ open class Aim {
                     response,
                     responser: self.responser,
                     task: task,
-                    target: target,
+                    spec: spec,
                     aim: self,
                     interceptors: self.interceptors,
                     completion: completion
@@ -111,7 +111,7 @@ open class Aim {
     
     // MARK: - Private
     private func request(
-        target: some Target,
+        spec: some Spec,
         aim: Aim,
         defaultHeaders: HTTPHeaders,
         interceptors: [any Interceptor],
@@ -123,7 +123,7 @@ open class Aim {
         
         // Make request.
         request(
-            target: target,
+            spec: spec,
             task: task,
             aim: aim,
             defaultHeaders: defaultHeaders,
@@ -139,7 +139,7 @@ open class Aim {
             case let .success(request):
                 // Perform request
                 task {
-                    self.request(request, with: target) { response in
+                    self.request(request, with: spec) { response in
                         completion(task, response)
                     }
                 }
@@ -154,7 +154,7 @@ open class Aim {
     }
     
     private func request(
-        target: some Target,
+        spec: some Spec,
         task: any SessionTask,
         aim: Aim,
         defaultHeaders: HTTPHeaders,
@@ -162,7 +162,7 @@ open class Aim {
         requestModifier: ((URLRequest) -> URLRequest)?,
         completion: @escaping (Result<URLRequest, any Error>) -> Void
     ) {
-        guard let url = target.url else {
+        guard let url = spec.url else {
             // Validate URL.
             completion(.failure(NetworkError.invalidURL))
             return
@@ -170,11 +170,11 @@ open class Aim {
         
         do {
             // Make url request.
-            var request = try target.request(url: url)
+            var request = try spec.request(url: url)
             // Method
-            request.httpMethod = target.method.rawValue
+            request.httpMethod = spec.method.rawValue
             // Header
-            request.allHTTPHeaderFields = defaultHeaders.merging(target.headers) { _, new in new }
+            request.allHTTPHeaderFields = defaultHeaders.merging(spec.headers) { _, new in new }
             
             // Traversal all request interceptors before request.
             intercept(
@@ -184,7 +184,7 @@ open class Aim {
                 interceptor.request(
                     request,
                     aim: aim,
-                    target: target,
+                    spec: spec,
                     sessionTask: task,
                     continuation: .init(completion)
                 )
@@ -207,10 +207,10 @@ open class Aim {
     
     private func request(
         _ request: URLRequest,
-        with target: some Target,
+        with spec: some Spec,
         completion: @escaping (Result<(Data, URLResponse), any Error>) -> Void
     ) -> SessionTask {
-        switch target.transaction {
+        switch spec.transaction {
         case .data:
             return provider.dataTask(
                 with: request,
@@ -235,7 +235,7 @@ open class Aim {
     private func response(
         _ response: Result<(Data, URLResponse), any Error>,
         task: any SessionTask,
-        target: some Target,
+        spec: some Spec,
         aim: Aim,
         interceptors: [any Interceptor],
         completion: @escaping (Result<(Data, URLResponse), any Error>) -> Void
@@ -248,7 +248,7 @@ open class Aim {
             interceptor.response(
                 response,
                 aim: aim,
-                target: target,
+                spec: spec,
                 sessionTask: task,
                 continuation: .init(completion)
             )
@@ -263,19 +263,19 @@ open class Aim {
         }
     }
     
-    private func response<T: Target>(
+    private func response<S: Spec>(
         _ response: Result<(Data, URLResponse), any Error>,
         responser: any Responser,
         task: any SessionTask,
-        target: T,
+        spec: S,
         aim: Aim,
         interceptors: [any Interceptor],
-        completion: @escaping (Result<T.Result, any Error>) -> Void
+        completion: @escaping (Result<S.Result, any Error>) -> Void
     ) {
         // Process network response through an reponser.
-        let result: Result<T.Result, any Error>
+        let result: Result<S.Result, any Error>
         do {
-            result = .success(try responser.response(response, target: target))
+            result = .success(try responser.response(response, spec: spec))
         } catch {
             result = .failure(error)
         }
@@ -288,7 +288,7 @@ open class Aim {
             interceptor.result(
                 response,
                 aim: aim,
-                target: target,
+                spec: spec,
                 sessionTask: task,
                 continuation: .init(completion)
             )
