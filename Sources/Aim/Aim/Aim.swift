@@ -116,7 +116,7 @@ open class Aim {
         defaultHeaders: HTTPHeaders,
         interceptors: [any Interceptor],
         requestModifier: ((URLRequest) -> URLRequest)?,
-        completion: @escaping (ContainerSessionTask, Result<(Data, URLResponse), any Error>) -> Void
+        completion: @escaping (any SessionTask, Result<(Data, URLResponse), any Error>) -> Void
     ) -> any SessionTask {
         // Create new container session task for current request.
         let task = ContainerSessionTask()
@@ -155,7 +155,7 @@ open class Aim {
     
     private func request(
         target: some Target,
-        task: ContainerSessionTask,
+        task: any SessionTask,
         aim: Aim,
         defaultHeaders: HTTPHeaders,
         interceptors: [any Interceptor],
@@ -234,7 +234,7 @@ open class Aim {
     
     private func response(
         _ response: Result<(Data, URLResponse), any Error>,
-        task: ContainerSessionTask,
+        task: any SessionTask,
         target: some Target,
         aim: Aim,
         interceptors: [any Interceptor],
@@ -266,7 +266,7 @@ open class Aim {
     private func response<T: Target>(
         _ response: Result<(Data, URLResponse), any Error>,
         responser: any Responser,
-        task: ContainerSessionTask,
+        task: any SessionTask,
         target: T,
         aim: Aim,
         interceptors: [any Interceptor],

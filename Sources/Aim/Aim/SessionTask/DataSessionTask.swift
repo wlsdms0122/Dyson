@@ -36,6 +36,10 @@ final public class DataSessionTask: SessionTask {
     }
     
     // MARK: - Public
+    public func addChild(_ task: SessionTask) {
+        assertionFailure("`DataSessionTask` cannot have child session tasks.")
+    }
+    
     public func cancel() {
         sessionTask?.cancel()
     }

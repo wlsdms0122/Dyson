@@ -11,16 +11,16 @@ public protocol NetworkProvider {
     func dataTask(
         with request: URLRequest,
         completion: @escaping (Result<(Data, URLResponse), any Error>) -> Void
-    ) -> DataSessionTask
+    ) -> any SessionTask
     func uploadTask(
         with request: URLRequest,
         from data: Data,
         completion: @escaping (Result<(Data, URLResponse), any Error>) -> Void
-    ) -> DataSessionTask
+    ) -> any SessionTask
     func downloadTask(
         with request: URLRequest,
         completion: @escaping (Result<(Data, URLResponse), any Error>) -> Void
-    ) -> DataSessionTask
+    ) -> any SessionTask
 }
 
 // MARK: - Extension

@@ -19,10 +19,6 @@ final public class ContainerSessionTask: SessionTask {
     }
     
     // MARK: - Public
-    public func callAsFunction(_ child: () -> any SessionTask) {
-        addChild(child())
-    }
-    
     public func addChild(_ task: any SessionTask) {
         state.merge(task.state)
         task.state = state

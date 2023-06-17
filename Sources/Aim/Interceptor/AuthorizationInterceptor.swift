@@ -25,7 +25,7 @@ public struct AuthorizationInterceptor: Interceptor {
         _ request: URLRequest,
         aim: Aim,
         target: some Target,
-        sessionTask: ContainerSessionTask,
+        sessionTask: any SessionTask,
         continuation: Continuation<URLRequest>
     ) {
         guard let target = target as? Authorizable,

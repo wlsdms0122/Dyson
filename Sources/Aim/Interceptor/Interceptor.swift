@@ -12,7 +12,7 @@ public protocol Interceptor {
         _ request: URLRequest,
         aim: Aim,
         target: some Target,
-        sessionTask: ContainerSessionTask,
+        sessionTask: any SessionTask,
         continuation: Continuation<URLRequest>
     )
     
@@ -20,7 +20,7 @@ public protocol Interceptor {
         _ response: Result<(Data, URLResponse), any Error>,
         aim: Aim,
         target: some Target,
-        sessionTask: ContainerSessionTask,
+        sessionTask: any SessionTask,
         continuation: Continuation<Result<(Data, URLResponse), any Error>>
     )
     
@@ -28,7 +28,7 @@ public protocol Interceptor {
         _ result: Result<T.Result, any Error>,
         aim: Aim,
         target: T,
-        sessionTask: ContainerSessionTask,
+        sessionTask: any SessionTask,
         continuation: Continuation<Result<T.Result, any Error>>
     )
 }
@@ -38,7 +38,7 @@ public extension Interceptor {
         _ request: URLRequest,
         aim: Aim,
         target: some Target,
-        sessionTask: ContainerSessionTask,
+        sessionTask: any SessionTask,
         continuation: Continuation<URLRequest>
     ) {
         continuation(request)
@@ -48,7 +48,7 @@ public extension Interceptor {
         _ response: Result<(Data, URLResponse), any Error>,
         aim: Aim,
         target: some Target,
-        sessionTask: ContainerSessionTask,
+        sessionTask: any SessionTask,
         continuation: Continuation<Result<(Data, URLResponse), any Error>>
     ) {
         continuation(response)
@@ -58,9 +58,9 @@ public extension Interceptor {
         _ result: Result<T.Result, any Error>,
         aim: Aim,
         target: T,
-        sessionTask: ContainerSessionTask,
+        sessionTask: any SessionTask,
         continuation: Continuation<Result<T.Result, any Error>>
     ) {
-        continuation(data)
+        continuation(result)
     }
 }

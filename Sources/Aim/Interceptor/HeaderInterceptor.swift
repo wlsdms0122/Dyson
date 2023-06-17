@@ -27,7 +27,7 @@ public struct HeaderInterceptor: Interceptor {
         _ request: URLRequest,
         aim: Aim,
         target: some Target,
-        sessionTask: ContainerSessionTask,
+        sessionTask: any SessionTask,
         continuation: Continuation<URLRequest>
     ) {
         var request = request

@@ -19,6 +19,7 @@ public protocol SessionTask: AnyObject {
     var sessionTasks: [URLSessionTask] { get }
     var sessionTask: URLSessionTask? { get }
     
+    func addChild(_ task: any SessionTask)
     func cancel()
 }
 
@@ -33,5 +34,11 @@ public extension SessionTask {
     
     func cancel() {
         tasks.last?.cancel()
+    }
+}
+
+public extension SessionTask {
+    func callAsFunction(_ child: () -> any SessionTask) {
+        addChild(child())
     }
 }

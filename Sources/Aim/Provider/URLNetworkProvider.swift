@@ -20,7 +20,7 @@ public struct URLNetworkProvider: NetworkProvider {
     public func dataTask(
         with request: URLRequest,
         completion: @escaping (Result<(Data, URLResponse), any Error>) -> Void
-    ) -> DataSessionTask {
+    ) -> any SessionTask {
         let sessionTask = session.dataTask(with: request) { data, response, error in
             let result: Result<(Data, URLResponse), any Error>
             if let error {
@@ -36,14 +36,14 @@ public struct URLNetworkProvider: NetworkProvider {
         
         sessionTask.resume()
         
-        return .init(request: request, sessionTask: sessionTask)
+        return DataSessionTask(request: request, sessionTask: sessionTask)
     }
     
     public func uploadTask(
         with request: URLRequest,
         from data: Data,
         completion: @escaping (Result<(Data, URLResponse), any Error>) -> Void
-    ) -> DataSessionTask {
+    ) -> any SessionTask {
         let sessionTask = session.uploadTask(with: request, from: data) { data, response, error in
             let result: Result<(Data, URLResponse), any Error>
             if let error {
@@ -59,13 +59,13 @@ public struct URLNetworkProvider: NetworkProvider {
         
         sessionTask.resume()
         
-        return .init(request: request, sessionTask: sessionTask)
+        return DataSessionTask(request: request, sessionTask: sessionTask)
     }
     
     public func downloadTask(
         with request: URLRequest,
         completion: @escaping (Result<(Data, URLResponse), any Error>) -> Void
-    ) -> DataSessionTask {
+    ) -> any SessionTask {
         fatalError()
     }
     
