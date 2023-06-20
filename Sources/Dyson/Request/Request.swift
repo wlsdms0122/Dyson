@@ -37,4 +37,10 @@ public extension Request {
     ) -> Self where Self == BodyRequest<Parameter> {
         BodyRequest(parameter, encoder: encoder)
     }
+    
+    static func body(
+        _ parameter: Data
+    ) -> Self where Self == BodyRequest<Data> {
+        BodyRequest(parameter, encoder: .none)
+    }
 }
