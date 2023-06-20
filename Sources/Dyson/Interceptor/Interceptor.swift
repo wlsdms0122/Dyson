@@ -10,25 +10,25 @@ import Foundation
 public protocol Interceptor {
     func request(
         _ request: URLRequest,
-        aim: Aim,
+        dyson: Dyson,
         spec: some Spec,
-        sessionTask: any SessionTask,
+        sessionTask: ContainerSessionTask,
         continuation: Continuation<URLRequest>
     )
     
     func response(
         _ response: Result<(Data, URLResponse), any Error>,
-        aim: Aim,
+        dyson: Dyson,
         spec: some Spec,
-        sessionTask: any SessionTask,
+        sessionTask: ContainerSessionTask,
         continuation: Continuation<Result<(Data, URLResponse), any Error>>
     )
     
     func result<S: Spec>(
         _ result: Result<S.Result, any Error>,
-        aim: Aim,
+        dyson: Dyson,
         spec: S,
-        sessionTask: any SessionTask,
+        sessionTask: ContainerSessionTask,
         continuation: Continuation<Result<S.Result, any Error>>
     )
 }
@@ -36,9 +36,9 @@ public protocol Interceptor {
 public extension Interceptor {
     func request(
         _ request: URLRequest,
-        aim: Aim,
+        dyson: Dyson,
         spec: some Spec,
-        sessionTask: any SessionTask,
+        sessionTask: ContainerSessionTask,
         continuation: Continuation<URLRequest>
     ) {
         continuation(request)
@@ -46,9 +46,9 @@ public extension Interceptor {
     
     func response(
         _ response: Result<(Data, URLResponse), any Error>,
-        aim: Aim,
+        dyson: Dyson,
         spec: some Spec,
-        sessionTask: any SessionTask,
+        sessionTask: ContainerSessionTask,
         continuation: Continuation<Result<(Data, URLResponse), any Error>>
     ) {
         continuation(response)
@@ -56,9 +56,9 @@ public extension Interceptor {
     
     func result<S: Spec>(
         _ result: Result<S.Result, any Error>,
-        aim: Aim,
+        dyson: Dyson,
         spec: S,
-        sessionTask: any SessionTask,
+        sessionTask: ContainerSessionTask,
         continuation: Continuation<Result<S.Result, any Error>>
     ) {
         continuation(result)

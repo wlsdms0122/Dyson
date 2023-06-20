@@ -28,7 +28,7 @@ public protocol Spec {
 
 public extension Spec {
     var url: URL? {
-        if #available(iOS 16.0, *) {
+        if #available(iOS 16.0, macOS 13.0, *) {
             return URL(string:  baseURL)?.appending(path: path)
         } else {
             return URL(string: baseURL)?.appendingPathComponent(path)

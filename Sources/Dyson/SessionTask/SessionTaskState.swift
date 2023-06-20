@@ -12,7 +12,7 @@ final public class SessionTaskState {
     private var state: [String: Any]
     
     // MARK: - Initializer
-    init(_ state: [String: Any] = [:]) {
+    public init(_ state: [String: Any] = [:]) {
         self.state = state
     }
     
@@ -30,8 +30,9 @@ final public class SessionTaskState {
         state[key] as? T
     }
     
-    public func merge(_ state: SessionTaskState) {
+    public func merging(_ state: SessionTaskState) -> SessionTaskState {
         self.state.merge(state.state) { _, new in new }
+        return self
     }
     
     // MARK: - Private

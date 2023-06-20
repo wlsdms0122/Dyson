@@ -25,9 +25,9 @@ public struct HeaderInterceptor: Interceptor {
     // MARK: - Public
     public func request(
         _ request: URLRequest,
-        aim: Aim,
+        dyson: Dyson,
         spec: some Spec,
-        sessionTask: any SessionTask,
+        sessionTask: ContainerSessionTask,
         continuation: Continuation<URLRequest>
     ) {
         var request = request

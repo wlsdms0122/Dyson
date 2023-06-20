@@ -1,5 +1,5 @@
 //
-//  Aim.swift
+//  Dyson.swift
 //  
 //
 //  Created by jsilver on 2022/01/09.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-open class Aim {
+open class Dyson {
     // MARK: - Property
     private let provider: any NetworkProvider
     
@@ -31,7 +31,7 @@ open class Aim {
     
     // MARK: - Public
     @discardableResult
-    open func request(
+    open func response(
         _ spec: some Spec,
         progress: ((Progress) -> Void)? = nil,
         requestModifier: ((URLRequest) -> URLRequest)? = nil,
@@ -40,9 +40,10 @@ open class Aim {
         // Request network with spec.
         request(
             spec: spec,
-            aim: self,
+            dyson: self,
             defaultHeaders: defaultHeaders,
             interceptors: interceptors,
+            progress: progress,
             requestModifier: requestModifier
         ) { [weak self] task, response in
             guard let self else {
@@ -55,7 +56,7 @@ open class Aim {
                 response,
                 task: task,
                 spec: spec,
-                aim: self,
+                dyson: self,
                 interceptors: self.interceptors,
                 completion: completion
             )
@@ -63,7 +64,7 @@ open class Aim {
     }
     
     @discardableResult
-    open func request<S: Spec>(
+    open func data<S: Spec>(
         _ spec: S,
         progress: ((Progress) -> Void)? = nil,
         requestModifier: ((URLRequest) -> URLRequest)? = nil,
@@ -72,9 +73,10 @@ open class Aim {
         // Request network with spec.
         request(
             spec: spec,
-            aim: self,
+            dyson: self,
             defaultHeaders: defaultHeaders,
             interceptors: interceptors,
+            progress: progress,
             requestModifier: requestModifier
         ) { [weak self] task, response in
             guard let self else {
@@ -87,7 +89,7 @@ open class Aim {
                 response,
                 task: task,
                 spec: spec,
-                aim: self,
+                dyson: self,
                 interceptors: self.interceptors
             ) { [weak self] response in
                 guard let self else {
@@ -101,7 +103,7 @@ open class Aim {
                     responser: self.responser,
                     task: task,
                     spec: spec,
-                    aim: self,
+                    dyson: self,
                     interceptors: self.interceptors,
                     completion: completion
                 )
@@ -112,20 +114,21 @@ open class Aim {
     // MARK: - Private
     private func request(
         spec: some Spec,
-        aim: Aim,
+        dyson: Dyson,
         defaultHeaders: HTTPHeaders,
         interceptors: [any Interceptor],
+        progress: ((Progress) -> Void)?,
         requestModifier: ((URLRequest) -> URLRequest)?,
-        completion: @escaping (any SessionTask, Result<(Data, URLResponse), any Error>) -> Void
+        completion: @escaping (ContainerSessionTask, Result<(Data, URLResponse), any Error>) -> Void
     ) -> any SessionTask {
         // Create new container session task for current request.
-        let task = ContainerSessionTask()
+        let task = ContainerSessionTask(progress: progress)
         
         // Make request.
         request(
             spec: spec,
             task: task,
-            aim: aim,
+            dyson: dyson,
             defaultHeaders: defaultHeaders,
             interceptors: interceptors,
             requestModifier: requestModifier
@@ -138,10 +141,15 @@ open class Aim {
             switch result {
             case let .success(request):
                 // Perform request
-                task {
-                    self.request(request, with: spec) { response in
-                        completion(task, response)
-                    }
+                let sessionTask = self.request(
+                    request,
+                    with: spec
+                )
+
+                task.addChild(sessionTask)
+                
+                sessionTask._resume { response in
+                    completion(task, response)
                 }
                 
             case let .failure(error):
@@ -155,8 +163,8 @@ open class Aim {
     
     private func request(
         spec: some Spec,
-        task: any SessionTask,
-        aim: Aim,
+        task: ContainerSessionTask,
+        dyson: Dyson,
         defaultHeaders: HTTPHeaders,
         interceptors: [any Interceptor],
         requestModifier: ((URLRequest) -> URLRequest)?,
@@ -183,7 +191,7 @@ open class Aim {
             ) { interceptor, request, completion in
                 interceptor.request(
                     request,
-                    aim: aim,
+                    dyson: dyson,
                     spec: spec,
                     sessionTask: task,
                     continuation: .init(completion)
@@ -207,36 +215,25 @@ open class Aim {
     
     private func request(
         _ request: URLRequest,
-        with spec: some Spec,
-        completion: @escaping (Result<(Data, URLResponse), any Error>) -> Void
-    ) -> SessionTask {
+        with spec: some Spec
+    ) -> any DataSessionTask {
         switch spec.transaction {
         case .data:
-            return provider.dataTask(
-                with: request,
-                completion: completion
-            )
+            return provider.dataTask(with: request)
             
         case let .upload(data):
-            return provider.uploadTask(
-                with: request,
-                from: data,
-                completion: completion
-            )
+            return provider.uploadTask(with: request, from: data)
             
         case .download:
-            return provider.downloadTask(
-                with: request,
-                completion: completion
-            )
+            return provider.downloadTask(with: request)
         }
     }
     
     private func response(
         _ response: Result<(Data, URLResponse), any Error>,
-        task: any SessionTask,
+        task: ContainerSessionTask,
         spec: some Spec,
-        aim: Aim,
+        dyson: Dyson,
         interceptors: [any Interceptor],
         completion: @escaping (Result<(Data, URLResponse), any Error>) -> Void
     ) {
@@ -247,7 +244,7 @@ open class Aim {
         ) { interceptor, response, completion in
             interceptor.response(
                 response,
-                aim: aim,
+                dyson: dyson,
                 spec: spec,
                 sessionTask: task,
                 continuation: .init(completion)
@@ -266,9 +263,9 @@ open class Aim {
     private func response<S: Spec>(
         _ response: Result<(Data, URLResponse), any Error>,
         responser: any Responser,
-        task: any SessionTask,
+        task: ContainerSessionTask,
         spec: S,
-        aim: Aim,
+        dyson: Dyson,
         interceptors: [any Interceptor],
         completion: @escaping (Result<S.Result, any Error>) -> Void
     ) {
@@ -287,7 +284,7 @@ open class Aim {
         ) { interceptor, response, completion in
             interceptor.result(
                 response,
-                aim: aim,
+                dyson: dyson,
                 spec: spec,
                 sessionTask: task,
                 continuation: .init(completion)

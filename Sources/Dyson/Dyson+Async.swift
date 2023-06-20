@@ -1,5 +1,5 @@
 //
-//  Aim+Async.swift
+//  Dyson+Async.swift
 //
 //
 //  Created by JSilver on 2023/06/16.
@@ -7,15 +7,15 @@
 
 import Foundation
 
-public extension Aim {
+public extension Dyson {
     @discardableResult
-    func request(
+    func response(
         _ spec: some Spec,
         progress: ((Progress) -> Void)? = nil,
         requestModifier: ((URLRequest) -> URLRequest)? = nil
     ) async throws -> (Data, URLResponse) {
-        try await withUnsafeThrowingContinuation { continuation in
-            request(
+        try await withCheckedThrowingContinuation { continuation in
+            response(
                 spec,
                 progress: progress,
                 requestModifier: requestModifier
@@ -32,13 +32,13 @@ public extension Aim {
     }
     
     @discardableResult
-    func response<S: Spec>(
+    func data<S: Spec>(
         _ spec: S,
         progress: ((Progress) -> Void)? = nil,
         requestModifier: ((URLRequest) -> URLRequest)? = nil
     ) async throws -> S.Result {
-        try await withUnsafeThrowingContinuation { continuation in
-            request(
+        try await withCheckedThrowingContinuation { continuation in
+            data(
                 spec,
                 progress: progress,
                 requestModifier: requestModifier

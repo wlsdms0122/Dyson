@@ -23,9 +23,9 @@ public struct AuthorizationInterceptor: Interceptor {
     // MARK: - Public
     public func request(
         _ request: URLRequest,
-        aim: Aim,
+        dyson: Dyson,
         spec: some Spec,
-        sessionTask: any SessionTask,
+        sessionTask: ContainerSessionTask,
         continuation: Continuation<URLRequest>
     ) {
         guard let spec = spec as? Authorizable,
