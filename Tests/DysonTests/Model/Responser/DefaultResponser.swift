@@ -1,30 +1,34 @@
 //
-//  NTNetworkResponser.swift
-//  
+//  DefaultResponser.swift
+//
 //
 //  Created by jsilver on 2022/01/23.
 //
 
 import Foundation
-import Aim
+import Dyson
 
-struct NTResponser: Responser {
+extension Responser where Self == DefaultResponser {
+    static var `default`: Self { DefaultResponser() }
+}
+
+struct DefaultResponser: Responser {
     // MARK: - Property
     
     // MARK: - Initializer
     
     // MARK: - Lifecycle
-    func response<T: Target>(
+    func response<S: Spec>(
         _ response: Result<(Data, URLResponse), any Error>,
-        target: T
-    ) throws -> T.Result {
+        spec: S
+    ) throws -> S.Result {
         switch response {
         case let .success((data, _)):
             do {
-                if let error = try? target.error.map(data) {
+                if let error = try? spec.error.map(data) {
                     throw error
                 } else {
-                    return try target.result.map(data)
+                    return try spec.result.map(data)
                 }
             } catch {
                 throw error

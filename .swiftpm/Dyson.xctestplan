@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "A7143F6D-262F-4718-A07C-BEA15AA4A539",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "DysonTests",
+        "name" : "DysonTests"
+      }
+    }
+  ],
+  "version" : 1
+}

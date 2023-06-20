@@ -4,15 +4,15 @@
 import PackageDescription
 
 let package = Package(
-    name: "Aim",
+    name: "Dyson",
     platforms: [
         .iOS(.v13),
         .macOS(.v13)
     ],
     products: [
         .library(
-            name: "Aim",
-            targets: ["Aim"]
+            name: "Dyson",
+            targets: ["Dyson"]
         )
     ],
     dependencies: [
@@ -20,13 +20,13 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "Aim",
+            name: "Dyson",
             dependencies: []
         ),
         .testTarget(
-            name: "AimTests",
+            name: "DysonTests",
             dependencies: [
-                "Aim"
+                "Dyson"
             ],
             resources: [
                 .process("Asset")

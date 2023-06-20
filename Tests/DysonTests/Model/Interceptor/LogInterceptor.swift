@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Aim
+import Dyson
 
 struct LogInterceptor: Interceptor {
     // MARK: - Property
@@ -17,16 +17,16 @@ struct LogInterceptor: Interceptor {
     // MARK: - Lifeycle
     func request(
         _ request: URLRequest,
-        aim: Aim,
-        target: some Target,
+        dyson: Dyson,
+        spec: some Spec,
         sessionTask: ContainerSessionTask,
         continuation: Continuation<URLRequest>
     ) {
         print("""
             
             📮 Request
-               URL         : \(request.url?.absoluteString ?? "[\(target.url as Any)]")
-               METHOD      : \(request.httpMethod ?? "[\(target.method.rawValue)]")
+               URL         : \(request.url?.absoluteString ?? "[\(spec.url as Any)]")
+               METHOD      : \(request.httpMethod ?? "[\(spec.method.rawValue)]")
                HEADERS     : \(printPretty(request.allHTTPHeaderFields ?? [:], start: 3, indent: 2))
                BODY        :
                  \(String(data: request.httpBody ?? Data(), encoding: .utf8) ?? "unknown")
@@ -39,8 +39,8 @@ struct LogInterceptor: Interceptor {
     
     func response(
         _ response: Result<(Data, URLResponse), any Error>,
-        aim: Aim,
-        target: some Target,
+        dyson: Dyson,
+        spec: some Spec,
         sessionTask: ContainerSessionTask,
         continuation: Continuation<Result<(Data, URLResponse), any Error>>
     ) {
@@ -59,7 +59,7 @@ struct LogInterceptor: Interceptor {
         print("""
             
             📭 Response
-               URL         : \(httpResponse?.url?.absoluteString ?? "[\(target.url as Any)]")
+               URL         : \(httpResponse?.url?.absoluteString ?? "[\(spec.url as Any)]")
                STATUS CODE : \((httpResponse?.statusCode ?? -1))
                HEADERS     : \(printPretty(httpResponse?.allHeaderFields ?? [:], start: 3, indent: 2))
                DATA        :
