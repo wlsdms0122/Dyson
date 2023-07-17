@@ -27,9 +27,6 @@ let package = Package(
             name: "DysonTests",
             dependencies: [
                 "Dyson"
-            ],
-            resources: [
-                .process("Asset")
             ]
         )
     ]
