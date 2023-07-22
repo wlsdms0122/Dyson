@@ -39,7 +39,7 @@ final class ContinuationTests: XCTestCase {
         // Given
         let continuation = Continuation<Int> { result in
             switch result {
-            case let .success:
+            case .success:
                 XCTFail()
                 
             case let .failure(error):
