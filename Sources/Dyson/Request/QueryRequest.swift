@@ -23,13 +23,13 @@ public struct QueryRequest: Request {
             resolvingAgainstBaseURL: false
         )
         else {
-            throw NetworkError.invalidURL
+            throw DysonError.invalidURL
         }
         
         components.queryItems = parameter.map { .init(name: $0, value: $1) }
         
         guard let url = components.url else {
-            throw NetworkError.invalidURL
+            throw DysonError.invalidURL
         }
         
         return URLRequest(url: url)

@@ -40,7 +40,7 @@ final public class URLDataSessionTask: DataSessionTask {
             } else if let data, let response {
                 completion(.success((data, response)))
             } else {
-                completion(.failure(NetworkError.unknown))
+                completion(.failure(DysonError.unknown))
             }
         }
         
@@ -95,7 +95,7 @@ final public class URLUploadSessionTask: DataSessionTask {
             } else if let data, let response {
                 completion(.success((data, response)))
             } else {
-                completion(.failure(NetworkError.unknown))
+                completion(.failure(DysonError.unknown))
             }
         }
         
