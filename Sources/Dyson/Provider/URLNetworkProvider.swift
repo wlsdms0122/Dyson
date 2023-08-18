@@ -26,7 +26,7 @@ public class URLNetworkProvider: NetworkProvider {
     }
     
     public func downloadTask(with request: URLRequest) -> any DataSessionTask {
-        fatalError()
+        URLDownloadSessionTask(session: session, request: request)
     }
     
     // MARK: - Public
