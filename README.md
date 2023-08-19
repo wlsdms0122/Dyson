@@ -365,4 +365,4 @@ You can create your own `Mapper` that adopts the `Map` protocol.
 Any ideas, issues, opinions are welcome.
 
 # License
-Compose is available under the MIT license. See the LICENSE file for more info.
+Dyson is available under the MIT license. See the LICENSE file for more info.
