@@ -36,7 +36,7 @@ final class RequestTests: XCTestCase {
         let request = try sut(url: URL(string: "http://127.0.0.1:8080")!)
         
         // Then
-        XCTAssertEqual(request.url?.query(), "name=dyson")
+        XCTAssertEqual(request.url?.query, "name=dyson")
     }
     
     func test_that_body_request_make_URLRequest_from_the_url_with_data() async throws {

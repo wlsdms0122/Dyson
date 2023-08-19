@@ -25,7 +25,7 @@ final class SpecTests: XCTestCase {
         )
         
         // When
-        let _ = try await request(
+        _ = try await request(
             spec: sut,
             dataTask: { request, completion in
                 XCTAssertEqual(request.url?.absoluteString, "http://127.0.0.1:8080/ping")
@@ -44,7 +44,7 @@ final class SpecTests: XCTestCase {
         )
         
         // When
-        let _ = try await request(
+        _ = try await request(
             spec: sut,
             dataTask: { request, completion in
                 XCTAssertEqual(request.httpMethod, "GET")
@@ -63,7 +63,7 @@ final class SpecTests: XCTestCase {
         )
         
         // When
-        let _ = try await request(
+        _ = try await request(
             spec: sut,
             dataTask: { request, completion in
                 XCTAssertEqual(request.httpMethod, "POST")
@@ -82,7 +82,7 @@ final class SpecTests: XCTestCase {
         )
         
         // When
-        let _ = try await request(
+        _ = try await request(
             spec: sut,
             dataTask: { request, completion in
                 XCTAssertEqual(request.httpMethod, "PUT")
@@ -101,7 +101,7 @@ final class SpecTests: XCTestCase {
         )
         
         // When
-        let _ = try await request(
+        _ = try await request(
             spec: sut,
             dataTask: { request, completion in
                 XCTAssertEqual(request.httpMethod, "DELETE")
@@ -120,7 +120,7 @@ final class SpecTests: XCTestCase {
         )
         
         // When
-        let _ = try await request(
+        _ = try await request(
             spec: sut,
             dataTask: { request, completion in
                 XCTAssertEqual(
@@ -142,10 +142,10 @@ final class SpecTests: XCTestCase {
         )
         
         // When
-        let _ = try await request(
+        _ = try await request(
             spec: sut,
             dataTask: { request, completion in
-                XCTAssertEqual(request.url?.query(), "name=dyson")
+                XCTAssertEqual(request.url?.query, "name=dyson")
                 
                 completion(.success((Data(), .http(request, status: 200))))
             }
@@ -162,11 +162,88 @@ final class SpecTests: XCTestCase {
         )
         
         // When
-        let _ = try await request(
+        _ = try await request(
             spec: sut,
             dataTask: { request, completion in
                 XCTAssertEqual(request.httpBody, data)
                 
+                completion(.success((Data(), .http(request, status: 200))))
+            }
+        )
+        
+        // Then
+    }
+    
+    func test_that_data_task_performed_from_data_transaction_as_specified_in_the_spec() async throws {
+        // Given
+        let sut = MockSpec<Empty, Empty, Empty>(
+            transaction: .data
+        )
+        
+        // When
+        _ = try await request(
+            spec: sut,
+            dataTask: { request, completion in
+                completion(.success((Data(), .http(request, status: 200))))
+            },
+            uploadTask: { _, _, completion in
+                XCTFail()
+                completion(.failure(TestError(message: "Wrong function called.")))
+            },
+            downloadTask: { _, completion in
+                XCTFail()
+                completion(.failure(TestError(message: "Wrong function called.")))
+            }
+        )
+        
+        // Then
+    }
+    
+    func test_that_upload_task_performed_from_upload_transaction_as_specified_in_the_spec() async throws {
+        // Given
+        let originData = "dyson".data(using: .utf8)!
+        let sut = MockSpec<Empty, Empty, Empty>(
+            transaction: .upload(originData)
+        )
+        
+        // When
+        _ = try await request(
+            spec: sut,
+            dataTask: { request, completion in
+                XCTFail()
+                completion(.failure(TestError(message: "Wrong function called.")))
+            },
+            uploadTask: { request, data, completion in
+                XCTAssertEqual(data, originData)
+                completion(.success((Data(), .http(request, status: 200))))
+            },
+            downloadTask: { _, completion in
+                XCTFail()
+                completion(.failure(TestError(message: "Wrong function called.")))
+            }
+        )
+        
+        // Then
+    }
+    
+    func test_that_download_task_performed_from_download_transaction_as_specified_in_the_spec() async throws {
+        // Given
+        let sut = MockSpec<Empty, Empty, Empty>(
+            transaction: .download
+        )
+        
+        // When
+        _ = try await request(
+            spec: sut,
+            dataTask: { request, completion in
+                XCTFail()
+                completion(.failure(TestError(message: "Wrong function called.")))
+            },
+            uploadTask: { request, _, completion in
+                XCTFail()
+                completion(.failure(TestError(message: "Wrong function called.")))
+            },
+            downloadTask: { request, completion in
                 completion(.success((Data(), .http(request, status: 200))))
             }
         )

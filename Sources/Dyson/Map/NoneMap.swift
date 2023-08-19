@@ -15,7 +15,7 @@ public struct NoneMap<Value>: Map {
     
     // MARK: - Public
     public func map(_ data: Data) throws -> Value {
-        throw NetworkError.failedToParse(nil)
+        throw DysonError.failedToParse(nil)
     }
     
     // MARK: - Private

@@ -47,7 +47,7 @@ open class Dyson {
             requestModifier: requestModifier
         ) { [weak self] task, response in
             guard let self else {
-                completion(.failure(NetworkError.unknown))
+                completion(.failure(DysonError.unknown))
                 return
             }
             
@@ -80,7 +80,7 @@ open class Dyson {
             requestModifier: requestModifier
         ) { [weak self] task, response in
             guard let self else {
-                completion(.failure(NetworkError.unknown))
+                completion(.failure(DysonError.unknown))
                 return
             }
             
@@ -93,7 +93,7 @@ open class Dyson {
                 interceptors: self.interceptors
             ) { [weak self] response in
                 guard let self else {
-                    completion(.failure(NetworkError.unknown))
+                    completion(.failure(DysonError.unknown))
                     return
                 }
                 
@@ -134,7 +134,7 @@ open class Dyson {
             requestModifier: requestModifier
         ) { [weak self] result in
             guard let self else {
-                completion(task, .failure(NetworkError.unknown))
+                completion(task, .failure(DysonError.unknown))
                 return
             }
             
@@ -172,7 +172,7 @@ open class Dyson {
     ) {
         guard let url = spec.url else {
             // Validate URL.
-            completion(.failure(NetworkError.invalidURL))
+            completion(.failure(DysonError.invalidURL))
             return
         }
         
