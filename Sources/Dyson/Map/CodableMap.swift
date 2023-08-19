@@ -20,7 +20,7 @@ public struct CodableMap<Value: Decodable>: Map {
         do {
             return try decoder.decode(Value.self, from: data)
         } catch {
-            throw NetworkError.failedToParse(error)
+            throw DysonError.failedToParse(error)
         }
     }
     
