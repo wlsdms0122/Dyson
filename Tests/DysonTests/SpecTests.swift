@@ -145,7 +145,7 @@ final class SpecTests: XCTestCase {
         let _ = try await request(
             spec: sut,
             dataTask: { request, completion in
-                XCTAssertEqual(request.url?.query(), "name=dyson")
+                XCTAssertEqual(request.url?.query, "name=dyson")
                 
                 completion(.success((Data(), .http(request, status: 200))))
             }

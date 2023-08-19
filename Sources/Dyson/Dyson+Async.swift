@@ -7,6 +7,25 @@
 
 import Foundation
 
+actor CancellableTask {
+    // MARK: - Property
+    private var sessionTask: (any SessionTask)?
+    
+    // MARK: - Initializer
+    init() { }
+    
+    // MARK: - Public
+    func perform(_ task: any SessionTask) {
+        self.sessionTask = task
+    }
+    
+    func cancel() {
+        sessionTask?.cancel()
+    }
+    
+    // MARK: - Private
+}
+
 public extension Dyson {
     @discardableResult
     func response(
@@ -14,27 +33,32 @@ public extension Dyson {
         progress: ((Progress) -> Void)? = nil,
         requestModifier: ((URLRequest) -> URLRequest)? = nil
     ) async throws -> (Data, URLResponse) {
-        var continuation: CheckedContinuation<(Data, URLResponse), Error>?
-        let sessionTask = response(
-            spec,
-            progress: progress,
-            requestModifier: requestModifier
-        ) { result in
-            switch result {
-            case let .success(result):
-                continuation?.resume(returning: result)
-                
-            case let .failure(error):
-                continuation?.resume(throwing: error)
-            }
-        }
+        let cancellableTask = CancellableTask()
         
         return try await withTaskCancellationHandler {
-            try await withCheckedThrowingContinuation {
-                continuation = $0
+            try await withCheckedThrowingContinuation { continuation in
+                Task {
+                    await cancellableTask.perform(
+                        response(
+                            spec,
+                            progress: progress,
+                            requestModifier: requestModifier
+                        ) { result in
+                            switch result {
+                            case let .success(result):
+                                continuation.resume(returning: result)
+                                
+                            case let .failure(error):
+                                continuation.resume(throwing: error)
+                            }
+                        }
+                    )
+                }
             }
         } onCancel: {
-            sessionTask.cancel()
+            Task {
+                await cancellableTask.cancel()
+            }
         }
     }
     
@@ -44,27 +68,32 @@ public extension Dyson {
         progress: ((Progress) -> Void)? = nil,
         requestModifier: ((URLRequest) -> URLRequest)? = nil
     ) async throws -> S.Result {
-        var continuation: CheckedContinuation<S.Result, Error>?
-        let sessionTask = data(
-            spec,
-            progress: progress,
-            requestModifier: requestModifier
-        ) { result in
-            switch result {
-            case let .success(result):
-                continuation?.resume(returning: result)
-                
-            case let .failure(error):
-                continuation?.resume(throwing: error)
-            }
-        }
+        let cancellableTask = CancellableTask()
         
         return try await withTaskCancellationHandler {
-            try await withCheckedThrowingContinuation {
-                continuation = $0
+            try await withCheckedThrowingContinuation { continuation in
+                Task {
+                    await cancellableTask.perform(
+                        data(
+                            spec,
+                            progress: progress,
+                            requestModifier: requestModifier
+                        ) { result in
+                            switch result {
+                            case let .success(result):
+                                continuation.resume(returning: result)
+                                
+                            case let .failure(error):
+                                continuation.resume(throwing: error)
+                            }
+                        }
+                    )
+                }
             }
         } onCancel: {
-            sessionTask.cancel()
+            Task {
+                await cancellableTask.cancel()
+            }
         }
     }
 }
