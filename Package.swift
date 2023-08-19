@@ -7,7 +7,7 @@ let package = Package(
     name: "Dyson",
     platforms: [
         .iOS(.v13),
-        .macOS(.v13)
+        .macOS(.v10_15)
     ],
     products: [
         .library(
