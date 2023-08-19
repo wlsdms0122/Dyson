@@ -13,12 +13,14 @@ extension XCTestCase {
         spec: some Spec,
         dataTask: MockNetworkProvider.DataTaskHandler? = nil,
         uploadTask: MockNetworkProvider.UploadTaskHandler? = nil,
+        downloadTask: MockNetworkProvider.DownloadTaskHandler? = nil,
         responser: any Responser = .default
     ) async throws -> (Data, URLResponse) {
         let dyson = Dyson(
             provider: .mock(
                 dataTask: dataTask,
-                uploadTask: uploadTask
+                uploadTask: uploadTask,
+                downloadTask: downloadTask
             ),
             responser: responser
         )

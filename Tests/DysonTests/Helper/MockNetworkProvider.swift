@@ -11,25 +11,34 @@ import Dyson
 extension NetworkProvider where Self == MockNetworkProvider {
     static func mock(
         dataTask: MockNetworkProvider.DataTaskHandler? = nil,
-        uploadTask: MockNetworkProvider.UploadTaskHandler? = nil
+        uploadTask: MockNetworkProvider.UploadTaskHandler? = nil,
+        downloadTask: MockNetworkProvider.DownloadTaskHandler? = nil
     ) -> Self {
-        MockNetworkProvider(dataTask: dataTask, uploadTask: uploadTask)
+        MockNetworkProvider(
+            dataTask: dataTask,
+            uploadTask: uploadTask,
+            downloadTask: downloadTask
+        )
     }
 }
 
 struct MockNetworkProvider: NetworkProvider {
     typealias DataTaskHandler = (URLRequest, @escaping (Result<(Data, URLResponse), any Error>) -> Void) -> Void
     typealias UploadTaskHandler = (URLRequest, Data, @escaping (Result<(Data, URLResponse), any Error>) -> Void) -> Void
+    typealias DownloadTaskHandler = (URLRequest, @escaping (Result<(Data, URLResponse), any Error>) -> Void) -> Void
     
     private let _dataTask: DataTaskHandler?
     private let _uploadTask: UploadTaskHandler?
+    private let _downloadTask: DownloadTaskHandler?
     
     init(
         dataTask: DataTaskHandler? = nil,
-        uploadTask: UploadTaskHandler? = nil
+        uploadTask: UploadTaskHandler? = nil,
+        downloadTask: DownloadTaskHandler? = nil
     ) {
         self._dataTask = dataTask
         self._uploadTask = uploadTask
+        self._downloadTask = downloadTask
     }
     
     func dataTask(with request: URLRequest) -> any DataSessionTask {
@@ -45,6 +54,8 @@ struct MockNetworkProvider: NetworkProvider {
     }
     
     func downloadTask(with request: URLRequest) -> any DataSessionTask {
-        fatalError()
+        MockDataSessionTask(data: (request)) { data, completion in
+            _downloadTask?(data, completion)
+        }
     }
 }
