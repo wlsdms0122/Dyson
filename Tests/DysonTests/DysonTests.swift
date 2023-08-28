@@ -63,4 +63,87 @@ final class DysonTests: XCTestCase {
         // Then
         XCTAssertEqual(response, person)
     }
+    
+    func test_that_dyson_throw_error_when_response_data_without_responser() async throws {
+        // Give
+        let person = Person(name: "dyson")
+        
+        let jsonEncoder = JSONEncoder()
+        let data = try jsonEncoder.encode(person)
+        
+        let sut = Dyson(
+            provider: .mock(
+                dataTask: { request, completion in
+                    completion(.success((data, .http(request, status: 200))))
+                }
+            )
+        )
+        let spec = MockSpec<Empty, Person, Empty>(
+            result: .codable
+        )
+        
+        // When
+        do {
+            try await sut.data(spec)
+            XCTFail()
+        } catch {
+            
+        }
+        
+        // Then
+    }
+    
+    func test_that_dyson_response_data_when_request_with_responser_even_if_responser_not_registered() async throws {
+        // Give
+        let person = Person(name: "dyson")
+        
+        let jsonEncoder = JSONEncoder()
+        let data = try jsonEncoder.encode(person)
+        
+        let sut = Dyson(
+            provider: .mock(
+                dataTask: { request, completion in
+                    completion(.success((data, .http(request, status: 200))))
+                }
+            )
+        )
+        let spec = MockSpec<Empty, Person, Empty>(
+            result: .codable
+        )
+        
+        // When
+        try await sut.data(spec, responser: .default)
+        
+        // Then
+    }
+    
+    func test_that_dyson_throw_error_when_response_data_even_if_responser_registered() async throws {
+        // Give
+        let person = Person(name: "dyson")
+        
+        let jsonEncoder = JSONEncoder()
+        let data = try jsonEncoder.encode(person)
+        
+        let sut = Dyson(
+            provider: .mock(
+                dataTask: { request, completion in
+                    completion(.success((data, .http(request, status: 200))))
+                }
+            ),
+            responser: .default
+        )
+        let spec = MockSpec<Empty, Person, Empty>(
+            result: .codable
+        )
+        
+        // When
+        do {
+            try await sut.data(spec, responser: .error(TestError(message: "error")))
+            XCTFail()
+        } catch {
+            
+        }
+        
+        // Then
+    }
 }
