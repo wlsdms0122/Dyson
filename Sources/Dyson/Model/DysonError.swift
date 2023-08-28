@@ -8,6 +8,7 @@
 import Foundation
 
 public enum DysonError: Error {
+    case responserNotRegistered
     case invalidURL
     case failedToParse(Error?)
     case failedToLoadData
