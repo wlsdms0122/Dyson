@@ -39,7 +39,7 @@ public struct GraphQLQuery: Encodable {
     // MARK: - Property
     public let query: String
     public let operationName: String
-    public let variables: [String: any Encodable]
+    public let variables: any Encodable
     
     // MARK: - Initializer
     public init(
@@ -49,8 +49,17 @@ public struct GraphQLQuery: Encodable {
     ) {
         self.query = query
         self.operationName = operationName
+        self.variables = variables.mapValues { AnyEncodable($0) }
+    }
+    
+    public init(
+        query: String,
+        operationName: String = "",
+        variables: any Encodable
+    ) {
+        self.query = query
+        self.operationName = operationName
         self.variables = variables
-        
     }
     
     // MARK: - Lifecycle
@@ -63,9 +72,7 @@ public struct GraphQLQuery: Encodable {
             try container.encode(operationName, forKey: .operationName)
         }
         
-        if !variables.isEmpty {
-            try container.encode(variables.mapValues { AnyEncodable($0) }, forKey: .variables)
-        }
+        try container.encode(variables, forKey: .variables)
     }
     
     // MARK: - Public
