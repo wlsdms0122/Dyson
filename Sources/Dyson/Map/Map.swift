@@ -31,7 +31,3 @@ public struct Mapper<Value>: Map {
     
     // MARK: - Private
 }
-
-public extension Mapper {
-    static var none: Self { Mapper(NoneMap()) }
-}

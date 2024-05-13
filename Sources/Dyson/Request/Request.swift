@@ -17,30 +17,3 @@ public extension Request {
         try make(url: url)
     }
 }
-
-public extension Request where Self == NoneRequest {
-    static var none: Self { NoneRequest() }
-}
-
-public extension Request {
-    static func query(
-        _ parameter: [String: String]
-    ) -> Self where Self == QueryRequest {
-        QueryRequest(parameter)
-    }
-}
-
-public extension Request {
-    static func body<Parameter>(
-        _ parameter: Parameter,
-        encoder: Encoder<Parameter>
-    ) -> Self where Self == BodyRequest<Parameter> {
-        BodyRequest(parameter, encoder: encoder)
-    }
-    
-    static func body(
-        _ parameter: Data
-    ) -> Self where Self == BodyRequest<Data> {
-        BodyRequest(parameter, encoder: .none)
-    }
-}

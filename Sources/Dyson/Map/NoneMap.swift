@@ -20,3 +20,7 @@ public struct NoneMap<Value>: Map {
     
     // MARK: - Private
 }
+
+public extension Mapper {
+    static var none: Self { Mapper(NoneMap()) }
+}
