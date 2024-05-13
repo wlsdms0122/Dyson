@@ -35,7 +35,3 @@ public struct Mapper<Value>: Map {
 public extension Mapper {
     static var none: Self { Mapper(NoneMap()) }
 }
-
-public extension Mapper where Value: Decodable {
-    static var codable: Self { Mapper(CodableMap<Value>()) }
-}

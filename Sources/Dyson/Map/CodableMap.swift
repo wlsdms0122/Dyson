@@ -9,13 +9,17 @@ import Foundation
 
 public struct CodableMap<Value: Decodable>: Map {
     // MARK: - Property
+    private let config: (JSONDecoder) -> Void
     
     // MARK: - Initializer
-    public init() { }
+    public init(config: @escaping (JSONDecoder) -> Void = { _ in }) {
+        self.config = config
+    }
     
     // MARK: - Public
     public func map(_ data: Data) throws -> Value {
         let decoder = JSONDecoder()
+        config(decoder)
         
         do {
             return try decoder.decode(Value.self, from: data)
@@ -25,4 +29,10 @@ public struct CodableMap<Value: Decodable>: Map {
     }
     
     // MARK: - Private
+}
+
+public extension Mapper where Value: Decodable {
+    static func codable(config: @escaping (JSONDecoder) -> Void = { _ in }) -> Self {
+        Mapper(CodableMap<Value>(config: config))
+    }
 }
