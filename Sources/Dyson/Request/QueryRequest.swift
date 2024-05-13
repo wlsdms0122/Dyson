@@ -37,3 +37,11 @@ public struct QueryRequest: Request {
     
     // MARK: - Private
 }
+
+public extension Request {
+    static func query(
+        _ parameter: [String: String]
+    ) -> Self where Self == QueryRequest {
+        QueryRequest(parameter)
+    }
+}

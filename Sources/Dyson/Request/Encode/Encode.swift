@@ -30,11 +30,3 @@ public struct Encoder<Value>: Encode {
     
     // MARK: - Private
 }
-
-public extension Encoder where Value == Data {
-    static var none: Self { Encoder(NoneEncode()) }
-}
-
-public extension Encoder where Value: Encodable {
-    static var codable: Self { Encoder(CodableEncode()) }
-}

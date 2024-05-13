@@ -19,3 +19,7 @@ public struct NoneRequest: Request {
     
     // MARK: - Private
 }
+
+public extension Request where Self == NoneRequest {
+    static var none: Self { NoneRequest() }
+}
