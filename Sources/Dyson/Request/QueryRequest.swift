@@ -1,6 +1,6 @@
 //
 //  QueryRequest.swift
-//  
+//
 //
 //  Created by jsilver on 2022/01/16.
 //
@@ -10,10 +10,12 @@ import Foundation
 public struct QueryRequest: Request {
     // MARK: - Property
     private let parameter: [String: String]
+    private let isEncoded: Bool
     
     // MARK: - Initializer
-    public init(_ parameter: [String: String]) {
+    public init(_ parameter: [String: String], isEncoded: Bool = false) {
         self.parameter = parameter
+        self.isEncoded = isEncoded
     }
     
     // MARK: - Public
@@ -26,7 +28,11 @@ public struct QueryRequest: Request {
             throw DysonError.invalidURL
         }
         
-        components.queryItems = parameter.map { .init(name: $0, value: $1) }
+        if isEncoded {
+            components.percentEncodedQueryItems = parameter.map { .init(name: $0, value: $1) }
+        } else {
+            components.queryItems = parameter.map { .init(name: $0, value: $1) }
+        }
         
         guard let url = components.url else {
             throw DysonError.invalidURL
@@ -40,8 +46,9 @@ public struct QueryRequest: Request {
 
 public extension Request {
     static func query(
-        _ parameter: [String: String]
+        _ parameter: [String: String],
+        isEncoded: Bool = false
     ) -> Self where Self == QueryRequest {
-        QueryRequest(parameter)
+        QueryRequest(parameter, isEncoded: isEncoded)
     }
 }
