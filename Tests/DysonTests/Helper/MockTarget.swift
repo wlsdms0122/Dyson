@@ -18,6 +18,7 @@ struct MockSpec<Parameter, Result, Error: Swift.Error>: Spec {
     
     let headers: HTTPHeaders
     let request: Request
+    let responser: (any Responser)?
     
     let result: Mapper<Result>
     let error: Mapper<Error>
@@ -32,6 +33,7 @@ struct MockSpec<Parameter, Result, Error: Swift.Error>: Spec {
         transaction: Transaction = .data,
         headers: HTTPHeaders = [:],
         request: Request = .none,
+        responser: (any Responser)? = nil,
         result: Mapper<Result> = .none,
         error: Mapper<Error> = .none,
         parameter: Parameter = Empty()
@@ -42,6 +44,7 @@ struct MockSpec<Parameter, Result, Error: Swift.Error>: Spec {
         self.transaction = transaction
         self.headers = headers
         self.request = request
+        self.responser = responser
         self.result = result
         self.error = error
         self.parameter = parameter

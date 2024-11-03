@@ -65,7 +65,6 @@ public extension Dyson {
     @discardableResult
     func data<S: Spec>(
         _ spec: S,
-        responser: (any Responser)? = nil,
         progress: ((Progress) -> Void)? = nil,
         requestModifier: ((URLRequest) -> URLRequest)? = nil
     ) async throws -> S.Result {
@@ -77,7 +76,6 @@ public extension Dyson {
                     await cancellableTask.perform(
                         data(
                             spec,
-                            responser: responser,
                             progress: progress,
                             requestModifier: requestModifier
                         ) { result in

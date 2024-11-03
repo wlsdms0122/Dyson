@@ -31,7 +31,6 @@ final class InterceptorTests: XCTestCase {
                     completion(.success((Data(), .http(request, status: 200))))
                 }
             ),
-            responser: .default,
             interceptors: [sut]
         )
         let spec = MockSpec<Empty, Empty, Empty>()
@@ -56,7 +55,6 @@ final class InterceptorTests: XCTestCase {
                     completion(.success((Data(), .http(request, status: 200))))
                 }
             ),
-            responser: .default,
             interceptors: [sut]
         )
         let spec = MockSpec<Empty, Empty, Empty>()

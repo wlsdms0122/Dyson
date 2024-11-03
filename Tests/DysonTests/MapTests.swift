@@ -35,7 +35,7 @@ final class MapperTests: XCTestCase {
         let jsonEncoder = JSONEncoder()
         let data = try jsonEncoder.encode(person)
         
-        let sut: Mapper<Person> = .codable
+        let sut: Mapper<Person> = .codable()
         
         // When
         let decodedData = try sut.map(data)
@@ -51,7 +51,7 @@ final class MapperTests: XCTestCase {
         let jsonEncoder = JSONEncoder()
         let data = try jsonEncoder.encode(coffee)
         
-        let sut: Mapper<Person> = .codable
+        let sut: Mapper<Person> = .codable()
         
         // When
         XCTAssertThrowsError(try sut.map(data))

@@ -54,7 +54,7 @@ final class RequestTests: XCTestCase {
     func test_that_body_request_make_URLRequest_from_the_url_with_encodable_data() async throws {
         // Given
         let person = Person(name: "dyson")
-        let sut: any Request = .body(person, encoder: .codable)
+        let sut: any Request = .body(person, encoder: .codable())
         
         // When
         let jsonEncoder = JSONEncoder()

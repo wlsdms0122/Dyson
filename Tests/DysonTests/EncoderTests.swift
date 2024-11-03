@@ -32,7 +32,7 @@ final class EncoderTests: XCTestCase {
     func test_that_codable_encoder_succeed_in_encoding_with_encodable_data() async throws {
         // Given
         let person = Person(name: "dyson")
-        let sut: Encoder<Person> = .codable
+        let sut: Encoder<Person> = .codable()
         
         // When
         let jsonEncoder = JSONEncoder()
