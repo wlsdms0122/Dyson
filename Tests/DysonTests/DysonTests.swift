@@ -26,8 +26,7 @@ final class DysonTests: XCTestCase {
                 dataTask: { request, completion in
                     completion(.success((data, .http(request, status: 200))))
                 }
-            ),
-            responser: .default
+            )
         )
         let spec = MockSpec<Empty, Empty, Empty>()
         
@@ -41,20 +40,24 @@ final class DysonTests: XCTestCase {
     func test_that_dyson_response_data_using_spec() async throws {
         // Given
         let person = Person(name: "dyson")
+        let json = """
+        {
+            "name": "dyson"
+        }
+        """
         
-        let jsonEncoder = JSONEncoder()
-        let data = try jsonEncoder.encode(person)
+        let data = json.data(using: .utf8) ?? Data()
         
         let sut = Dyson(
             provider: .mock(
                 dataTask: { request, completion in
                     completion(.success((data, .http(request, status: 200))))
                 }
-            ),
-            responser: .default
+            )
         )
         let spec = MockSpec<Empty, Person, Empty>(
-            result: .codable
+            responser: .default,
+            result: .codable()
         )
         
         // When
@@ -64,12 +67,15 @@ final class DysonTests: XCTestCase {
         XCTAssertEqual(response, person)
     }
     
-    func test_that_dyson_throw_error_when_response_data_without_responser() async throws {
-        // Give
-        let person = Person(name: "dyson")
+    func test_that_dyson_throw_error_when_spec_does_not_specifiy_responser() async throws {
+        // Given
+        let json = """
+        {
+            "name": "dyson"
+        }
+        """
         
-        let jsonEncoder = JSONEncoder()
-        let data = try jsonEncoder.encode(person)
+        let data = json.data(using: .utf8) ?? Data()
         
         let sut = Dyson(
             provider: .mock(
@@ -79,7 +85,7 @@ final class DysonTests: XCTestCase {
             )
         )
         let spec = MockSpec<Empty, Person, Empty>(
-            result: .codable
+            result: .codable()
         )
         
         // When
@@ -89,61 +95,5 @@ final class DysonTests: XCTestCase {
         } catch {
             
         }
-        
-        // Then
-    }
-    
-    func test_that_dyson_response_data_when_request_with_responser_even_if_responser_not_registered() async throws {
-        // Give
-        let person = Person(name: "dyson")
-        
-        let jsonEncoder = JSONEncoder()
-        let data = try jsonEncoder.encode(person)
-        
-        let sut = Dyson(
-            provider: .mock(
-                dataTask: { request, completion in
-                    completion(.success((data, .http(request, status: 200))))
-                }
-            )
-        )
-        let spec = MockSpec<Empty, Person, Empty>(
-            result: .codable
-        )
-        
-        // When
-        try await sut.data(spec, responser: .default)
-        
-        // Then
-    }
-    
-    func test_that_dyson_throw_error_when_response_data_even_if_responser_registered() async throws {
-        // Give
-        let person = Person(name: "dyson")
-        
-        let jsonEncoder = JSONEncoder()
-        let data = try jsonEncoder.encode(person)
-        
-        let sut = Dyson(
-            provider: .mock(
-                dataTask: { request, completion in
-                    completion(.success((data, .http(request, status: 200))))
-                }
-            ),
-            responser: .default
-        )
-        let spec = MockSpec<Empty, Person, Empty>(
-            result: .codable
-        )
-        
-        // When
-        do {
-            try await sut.data(spec, responser: .error(TestError(message: "error")))
-            XCTFail()
-        } catch {
-            
-        }
-        
-        // Then
     }
 }

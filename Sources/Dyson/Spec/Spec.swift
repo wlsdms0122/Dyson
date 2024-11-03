@@ -22,6 +22,8 @@ public protocol Spec {
     var headers: HTTPHeaders { get }
     
     var request: any Request { get }
+    var responser: (any Responser)? { get }
+    
     var result: Mapper<Result> { get }
     var error: Mapper<Error> { get }
 }

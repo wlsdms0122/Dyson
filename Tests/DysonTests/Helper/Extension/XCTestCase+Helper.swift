@@ -21,8 +21,7 @@ extension XCTestCase {
                 dataTask: dataTask,
                 uploadTask: uploadTask,
                 downloadTask: downloadTask
-            ),
-            responser: responser
+            )
         )
         
         return try await dyson.response(spec)

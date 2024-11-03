@@ -113,6 +113,25 @@ final class SpecTests: XCTestCase {
         // Then
     }
     
+    func test_that_request_method_is_PATCH_as_specified_in_the_spec() async throws {
+        // Given
+        let sut = MockSpec<Empty, Empty, Empty>(
+            method: .patch
+        )
+        
+        // When
+        _ = try await request(
+            spec: sut,
+            dataTask: { request, completion in
+                XCTAssertEqual(request.httpMethod, "PATCH")
+                
+                completion(.success((Data(), .http(request, status: 200))))
+            }
+        )
+        
+        // Then
+    }
+    
     func test_that_request_header_contains_authorization_as_specified_in_the_spec() async throws {
         // Given
         let sut = MockSpec<Empty, Empty, Empty>(

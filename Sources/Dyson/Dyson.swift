@@ -11,20 +11,16 @@ open class Dyson {
     // MARK: - Property
     private let provider: any NetworkProvider
     
-    public let responser: (any Responser)?
-    
     public let defaultHeaders: HTTPHeaders
     public let interceptors: [any Interceptor]
     
     // MARK: - Initializer
     public init(
         provider: any NetworkProvider,
-        responser: (any Responser)? = nil,
         defaultHeaders: HTTPHeaders = [:],
         interceptors: [any Interceptor] = []
     ) {
         self.provider = provider
-        self.responser = responser
         self.defaultHeaders = defaultHeaders
         self.interceptors = interceptors
     }
@@ -66,7 +62,6 @@ open class Dyson {
     @discardableResult
     open func data<S: Spec>(
         _ spec: S,
-        responser: (any Responser)? = nil,
         progress: ((Progress) -> Void)? = nil,
         requestModifier: ((URLRequest) -> URLRequest)? = nil,
         completion: @escaping (Result<S.Result, any Error>) -> Void
@@ -101,7 +96,6 @@ open class Dyson {
                 // Responser handle response.
                 self.response(
                     response,
-                    responser: responser ?? self.responser,
                     task: task,
                     spec: spec,
                     dyson: self,
@@ -263,15 +257,14 @@ open class Dyson {
     
     private func response<S: Spec>(
         _ response: Result<(Data, URLResponse), any Error>,
-        responser: (any Responser)?,
         task: ContainerSessionTask,
         spec: S,
         dyson: Dyson,
         interceptors: [any Interceptor],
         completion: @escaping (Result<S.Result, any Error>) -> Void
     ) {
-        guard let responser else {
-            completion(.failure(DysonError.responserNotRegistered))
+        guard let responser = spec.responser else {
+            completion(.failure(DysonError.responserDoseNotExist))
             return
         }
         
