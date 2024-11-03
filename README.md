@@ -32,11 +32,10 @@ dependencies: [
 ```
 
 # Basic Usage
-You should start by creating a `Dyson` object. `Dyson` takes parameters such as `NetworkProvider`, `Responser`, and `Interceptor`, which will be discussed below.
+You should start by creating a `Dyson` object. `Dyson` takes parameters such as `NetworkProvider` and `Interceptor`, which will be discussed below.
 ```swift
 let dyson = Dyson(
     provider: .url(),
-    responser: MyResponser(),
     defaultHeaders: [
         "Content-Type": "application/json"
     ],
@@ -58,6 +57,7 @@ dyson.data(GetInfoSpec(.init())) { result in
     // result's type is Result<GetInfoSpec.Result, any Error>
 }
 ```
+
 ## NetworkProvider
 `NetworkProvider` is the protocol that abstracts the functionality of network communication.
 
@@ -73,7 +73,7 @@ public protocol NetworkProvider {
 `Dyson` serve default network provider, `URLNetworkProvider` that implemented using `URLSession`.
 
 ## Responser
-`Responder` is a protocol that abstracts how to respond to a network response.
+`Responser` is a protocol that abstracts how to respond to a network response.
 
 Responsible for the implementation of how to handle the conventions for network responses between servers and clients.
 
@@ -88,9 +88,10 @@ public protocol Responser {
 
 For example, you might need to filter by a range of status codes with your own communication protocols, or parse response data and header values together.
 
-These characteristics usually depend on the server you're communicating with(just as different OpenAPIs have different communication protocols).
+These characteristics usually depend on the server you're communicating with (just as different OpenAPIs have different communication protocols).
 
-Typically, the implementation of a 'responder' looks like this.
+Typically, the implementation of a 'responser' looks like this.
+
 ```swift
 func response<S: Spec>(
     _ response: Result<(Data, URLResponse), any Error>,
@@ -277,6 +278,7 @@ public protocol Spec {
     var headers: HTTPHeaders { get }
     
     var request: any Request { get }
+    var responser: (any Responser)? { get }
     var result: Mapper<Result> { get }
     var error: Mapper<Error> { get }
 }
@@ -299,6 +301,7 @@ public struct GetInfoSpec: Spec {
             "id": parameter.id
         ])
     }
+    var responser: (any Responser)? { YourServerResponser() }
     var result: Mapper<Result> { .codable }
     var error: Mapper<Error> { .codable }
 
@@ -341,7 +344,7 @@ public protocol Request {
 The `Dyson` serve some requests.
 - none </br>
   Not exist additional process.
-- query(_:) </br>
+- query(_:isEncoded:) </br>
   Add the query parameters as a query to the URL.
 - body(_:encoder:) </br>
   After encoding with the encoder, add the parameters as data to the HTTP body. </br>
