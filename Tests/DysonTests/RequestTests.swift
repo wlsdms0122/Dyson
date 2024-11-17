@@ -30,13 +30,28 @@ final class RequestTests: XCTestCase {
     
     func test_that_query_request_make_URLRequest_from_the_url_with_query() async throws {
         // Given
-        let sut: any Request = .query(["name": "dyson"])
+        let sut: any Request = .query([
+            "name": ["dyson", "wlsdms0122"],
+            "age": 20,
+            "isAdmin": true,
+            "nickname": "jsilver"
+        ])
         
         // When
         let request = try sut(url: URL(string: "http://127.0.0.1:8080")!)
         
         // Then
-        XCTAssertEqual(request.url?.query, "name=dyson")
+        
+        XCTAssertEqual(
+            Set(request.url?.query?.split(separator: "&") ?? []),
+            [
+                "name=dyson",
+                "name=wlsdms0122",
+                "age=20",
+                "isAdmin=true",
+                "nickname=jsilver"
+            ]
+        )
     }
     
     func test_that_body_request_make_URLRequest_from_the_url_with_data() async throws {
