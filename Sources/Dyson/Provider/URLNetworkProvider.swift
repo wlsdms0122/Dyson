@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class URLNetworkProvider: NetworkProvider {
+open class URLNetworkProvider: NetworkProvider {
     // MARK: - Property
     private let session: URLSession
     
@@ -17,15 +17,15 @@ public class URLNetworkProvider: NetworkProvider {
     }
     
     // MARK: - Lifecycle
-    public func dataTask(with request: URLRequest) -> any DataSessionTask {
+    open func dataTask(with request: URLRequest) -> any DataSessionTask {
         URLDataSessionTask(session: session, request: request)
     }
     
-    public func uploadTask(with request: URLRequest, from data: Data) -> any DataSessionTask {
+    open func uploadTask(with request: URLRequest, from data: Data) -> any DataSessionTask {
         URLUploadSessionTask(session: session, request: request, data: data)
     }
     
-    public func downloadTask(with request: URLRequest) -> any DataSessionTask {
+    open func downloadTask(with request: URLRequest) -> any DataSessionTask {
         URLDownloadSessionTask(session: session, request: request)
     }
     
