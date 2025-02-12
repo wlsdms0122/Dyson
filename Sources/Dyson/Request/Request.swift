@@ -13,7 +13,7 @@ public protocol Request {
 }
 
 public extension Request {
-    func callAsFunction(url: URL) throws -> URLRequest {
-        try make(url: url)
+    func combine(with request: any Request) -> any Request {
+        Requests._CombineRequest(self, request)
     }
 }
