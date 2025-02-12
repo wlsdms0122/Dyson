@@ -9,7 +9,7 @@ import Foundation
 
 // MARK: - Request
 public protocol Request {
-    func make(url: URL) throws -> URLRequest
+    func apply(to request: inout URLRequest) throws
 }
 
 public extension Request {

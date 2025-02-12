@@ -13,9 +13,7 @@ public struct NoneRequest: Request {
     // MARK: - Initializer
     
     // MARK: - Public
-    public func make(url: URL) throws -> URLRequest {
-        URLRequest(url: url)
-    }
+    public func apply(to request: inout URLRequest) throws { }
     
     // MARK: - Private
 }
