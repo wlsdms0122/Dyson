@@ -173,7 +173,9 @@ open class Dyson {
         
         do {
             // Make url request.
-            var request = try spec.request(url: url)
+            var request = URLRequest(url: url)
+            try spec.request.apply(to: &request)
+            
             // Method
             request.httpMethod = spec.method.rawValue
             // Header

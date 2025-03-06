@@ -19,11 +19,8 @@ public struct BodyRequest<Parameter>: Request {
     }
     
     // MARK: - Public
-    public func make(url: URL) throws -> URLRequest {
-        var request = URLRequest(url: url)
+    public func apply(to request: inout URLRequest) throws {
         request.httpBody = try encoder.encode(parameter)
-        
-        return request
     }
     
     // MARK: - Private

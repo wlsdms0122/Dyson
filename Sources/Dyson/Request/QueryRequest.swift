@@ -19,8 +19,8 @@ public struct QueryRequest: Request {
     }
     
     // MARK: - Public
-    public func make(url: URL) throws -> URLRequest {
-        guard var components = URLComponents(
+    public func apply(to request: inout URLRequest) throws {
+        guard let url = request.url, var components = URLComponents(
             url: url,
             resolvingAgainstBaseURL: false
         )
@@ -46,7 +46,7 @@ public struct QueryRequest: Request {
             throw DysonError.invalidURL
         }
         
-        return URLRequest(url: url)
+        request.url = url
     }
     
     // MARK: - Private
