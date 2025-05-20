@@ -20,7 +20,7 @@ final class MapperTests: XCTestCase {
     func test_that_none_mapper_fail_to_decoding_always() async throws {
         // Given
         let data = "dyson".data(using: .utf8)!
-        let sut: Mapper<Data> = .none
+        let sut: Mapper<Data> = .never
         
         // When
         XCTAssertThrowsError(try sut.map(data))
