@@ -12,5 +12,6 @@ public enum DysonError: Error {
     case invalidURL
     case failedToParse(Error?)
     case failedToLoadData
+    case intentionalFailure(reason: String)
     case unknown
 }

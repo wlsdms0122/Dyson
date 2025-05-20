@@ -34,8 +34,8 @@ struct MockSpec<Parameter, Result, Error: Swift.Error>: Spec {
         headers: HTTPHeaders = [:],
         request: Request = .none,
         responser: (any Responser)? = nil,
-        result: Mapper<Result> = .none,
-        error: Mapper<Error> = .none,
+        result: Mapper<Result> = .never,
+        error: Mapper<Error> = .never,
         parameter: Parameter = Empty()
     ) {
         self.baseURL = baseURL
