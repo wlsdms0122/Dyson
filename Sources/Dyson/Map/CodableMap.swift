@@ -24,7 +24,7 @@ public struct CodableMap<Value: Decodable>: Map {
         do {
             return try decoder.decode(Value.self, from: data)
         } catch {
-            throw DysonError.failedToParse(error)
+            throw DSError.failedToParse(error)
         }
     }
     

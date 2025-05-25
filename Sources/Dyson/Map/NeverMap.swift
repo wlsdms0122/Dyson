@@ -15,7 +15,7 @@ public struct NeverMap<Value>: Map {
     
     // MARK: - Public
     public func map(_ data: Data) throws -> Value {
-        throw DysonError.intentionalFailure(reason: "NeverMap always fail to map.")
+        throw DSError.intentionalFailure(reason: "NeverMap always fail to map.")
     }
     
     // MARK: - Private

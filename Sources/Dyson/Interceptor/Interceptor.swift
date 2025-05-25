@@ -10,7 +10,7 @@ import Foundation
 public protocol Interceptor {
     func request(
         _ request: URLRequest,
-        dyson: Dyson,
+        dyson: DS,
         spec: some Spec,
         sessionTask: ContainerSessionTask,
         continuation: Continuation<URLRequest>
@@ -18,7 +18,7 @@ public protocol Interceptor {
     
     func response(
         _ response: Result<(Data, URLResponse), any Error>,
-        dyson: Dyson,
+        dyson: DS,
         spec: some Spec,
         sessionTask: ContainerSessionTask,
         continuation: Continuation<Result<(Data, URLResponse), any Error>>
@@ -26,7 +26,7 @@ public protocol Interceptor {
     
     func result<S: Spec>(
         _ result: Result<S.Result, any Error>,
-        dyson: Dyson,
+        dyson: DS,
         spec: S,
         sessionTask: ContainerSessionTask,
         continuation: Continuation<Result<S.Result, any Error>>
@@ -36,7 +36,7 @@ public protocol Interceptor {
 public extension Interceptor {
     func request(
         _ request: URLRequest,
-        dyson: Dyson,
+        dyson: DS,
         spec: some Spec,
         sessionTask: ContainerSessionTask,
         continuation: Continuation<URLRequest>
@@ -46,7 +46,7 @@ public extension Interceptor {
     
     func response(
         _ response: Result<(Data, URLResponse), any Error>,
-        dyson: Dyson,
+        dyson: DS,
         spec: some Spec,
         sessionTask: ContainerSessionTask,
         continuation: Continuation<Result<(Data, URLResponse), any Error>>
@@ -56,7 +56,7 @@ public extension Interceptor {
     
     func result<S: Spec>(
         _ result: Result<S.Result, any Error>,
-        dyson: Dyson,
+        dyson: DS,
         spec: S,
         sessionTask: ContainerSessionTask,
         continuation: Continuation<Result<S.Result, any Error>>

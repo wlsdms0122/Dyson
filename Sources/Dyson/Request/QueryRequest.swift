@@ -25,7 +25,7 @@ public struct QueryRequest: Request {
             resolvingAgainstBaseURL: false
         )
         else {
-            throw DysonError.invalidURL
+            throw DSError.invalidURL
         }
         
         let queryItems: [URLQueryItem] = parameter.flatMap { key, value in
@@ -43,7 +43,7 @@ public struct QueryRequest: Request {
         }
         
         guard let url = components.url else {
-            throw DysonError.invalidURL
+            throw DSError.invalidURL
         }
         
         request.url = url

@@ -34,7 +34,7 @@ dependencies: [
 # Basic Usage
 You should start by creating a `Dyson` object. `Dyson` takes parameters such as `NetworkProvider` and `Interceptor`, which will be discussed below.
 ```swift
-let dyson = Dyson(
+let dyson = DS(
     provider: .url(),
     defaultHeaders: [
         "Content-Type": "application/json"
@@ -133,7 +133,7 @@ public protocol Interceptor {
     /// Called before the request.
     func request(
         _ request: URLRequest,
-        dyson: Dyson,
+        dyson: DS,
         spec: some Spec,
         sessionTask: ContainerSessionTask,
         continuation: Continuation<URLRequest>
@@ -141,7 +141,7 @@ public protocol Interceptor {
     /// Called after receiving the response and before completion.
     func response(
         _ response: Result<(Data, URLResponse), any Error>,
-        dyson: Dyson,
+        dyson: DS,
         spec: some Spec,
         sessionTask: ContainerSessionTask,
         continuation: Continuation<Result<(Data, URLResponse), any Error>>
@@ -150,7 +150,7 @@ public protocol Interceptor {
     /// `response(_:dyson:sepc:sessionTask:continuation:)` shoule be call before this.
     func result<S: Spec>(
         _ result: Result<S.Result, any Error>,
-        dyson: Dyson,
+        dyson: DS,
         spec: S,
         sessionTask: ContainerSessionTask,
         continuation: Continuation<Result<S.Result, any Error>>
@@ -182,7 +182,7 @@ public struct HeaderInterceptor: Interceptor {
     // MARK: - Public
     public func request(
         _ request: URLRequest,
-        dyson: Dyson,
+        dyson: DS,
         spec: some Spec,
         sessionTask: ContainerSessionTask,
         continuation: Continuation<URLRequest>
@@ -205,7 +205,7 @@ A good example would be for processes like JWT authentication.
 ```swift
 func response(
     _ response: Result<(Data, URLResponse), any Error>,
-    dyson: Dyson,
+    dyson: DS,
     spec: some Spec,
     sessionTask: ContainerSessionTask,
     continuation: Continuation<Result<(Data, URLResponse), any Error>>

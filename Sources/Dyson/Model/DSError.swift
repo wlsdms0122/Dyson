@@ -1,13 +1,13 @@
 //
-//  DysonError.swift
-//  
+//  DSError.swift
+//
 //
 //  Created by jsilver on 2022/01/09.
 //
 
 import Foundation
 
-public enum DysonError: Error {
+public enum DSError: Error {
     case responserDoseNotExist
     case invalidURL
     case failedToParse(Error?)

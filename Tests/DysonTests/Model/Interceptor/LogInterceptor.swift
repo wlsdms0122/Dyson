@@ -17,7 +17,7 @@ struct LogInterceptor: Interceptor {
     // MARK: - Lifeycle
     func request(
         _ request: URLRequest,
-        dyson: Dyson,
+        dyson: DS,
         spec: some Spec,
         sessionTask: ContainerSessionTask,
         continuation: Continuation<URLRequest>
@@ -39,7 +39,7 @@ struct LogInterceptor: Interceptor {
     
     func response(
         _ response: Result<(Data, URLResponse), any Error>,
-        dyson: Dyson,
+        dyson: DS,
         spec: some Spec,
         sessionTask: ContainerSessionTask,
         continuation: Continuation<Result<(Data, URLResponse), any Error>>

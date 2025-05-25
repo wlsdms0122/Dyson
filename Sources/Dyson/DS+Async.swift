@@ -1,5 +1,5 @@
 //
-//  Dyson+Async.swift
+//  DS+Async.swift
 //
 //
 //  Created by JSilver on 2023/06/16.
@@ -26,7 +26,7 @@ actor CancellableTask {
     // MARK: - Private
 }
 
-public extension Dyson {
+public extension DS {
     @discardableResult
     func response(
         _ spec: some Spec,

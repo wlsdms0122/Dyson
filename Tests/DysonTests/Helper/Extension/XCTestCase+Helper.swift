@@ -16,7 +16,7 @@ extension XCTestCase {
         downloadTask: MockNetworkProvider.DownloadTaskHandler? = nil,
         responser: any Responser = .default
     ) async throws -> (Data, URLResponse) {
-        let dyson = Dyson(
+        let dyson = DS(
             provider: .mock(
                 dataTask: dataTask,
                 uploadTask: uploadTask,

@@ -23,7 +23,7 @@ public struct AuthorizationInterceptor: Interceptor {
     // MARK: - Public
     public func request(
         _ request: URLRequest,
-        dyson: Dyson,
+        dyson: DS,
         spec: some Spec,
         sessionTask: ContainerSessionTask,
         continuation: Continuation<URLRequest>

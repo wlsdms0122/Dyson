@@ -21,7 +21,7 @@ final class DysonTests: XCTestCase {
         // Given
         let data = "dyson".data(using: .utf8)!
         
-        let sut = Dyson(
+        let sut = DS(
             provider: .mock(
                 dataTask: { request, completion in
                     completion(.success((data, .http(request, status: 200))))
@@ -48,7 +48,7 @@ final class DysonTests: XCTestCase {
         
         let data = json.data(using: .utf8) ?? Data()
         
-        let sut = Dyson(
+        let sut = DS(
             provider: .mock(
                 dataTask: { request, completion in
                     completion(.success((data, .http(request, status: 200))))
@@ -77,7 +77,7 @@ final class DysonTests: XCTestCase {
         
         let data = json.data(using: .utf8) ?? Data()
         
-        let sut = Dyson(
+        let sut = DS(
             provider: .mock(
                 dataTask: { request, completion in
                     completion(.success((data, .http(request, status: 200))))

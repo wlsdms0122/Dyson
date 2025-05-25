@@ -20,7 +20,7 @@ final class InterceptorTests: XCTestCase {
     func test_that_header_interceptor_add_header_field_into_request_on_dyson_response() async throws {
         // Given
         let sut = HeaderInterceptor(key: "Authorization", value: "Bearer dyson-test")
-        let dyson = Dyson(
+        let dyson = DS(
             provider: .mock(
                 dataTask: { request, completion in
                     XCTAssertEqual(
@@ -44,7 +44,7 @@ final class InterceptorTests: XCTestCase {
     func test_that_authorization_interceptor_add_authorization_field_into_request_on_dyson_response() async throws {
         // Given
         let sut = AuthorizationInterceptor(token: "Bearer dyson-test")
-        let dyson = Dyson(
+        let dyson = DS(
             provider: .mock(
                 dataTask: { request, completion in
                     XCTAssertEqual(

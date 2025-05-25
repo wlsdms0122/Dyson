@@ -1,13 +1,13 @@
 //
-//  Dyson.swift
-//  
+//  DS.swift
+//
 //
 //  Created by jsilver on 2022/01/09.
 //
 
 import Foundation
 
-open class Dyson {
+open class DS {
     // MARK: - Property
     private let provider: any NetworkProvider
     
@@ -43,7 +43,7 @@ open class Dyson {
             requestModifier: requestModifier
         ) { [weak self] task, response in
             guard let self else {
-                completion(.failure(DysonError.unknown))
+                completion(.failure(DSError.unknown))
                 return
             }
             
@@ -76,7 +76,7 @@ open class Dyson {
             requestModifier: requestModifier
         ) { [weak self] task, response in
             guard let self else {
-                completion(.failure(DysonError.unknown))
+                completion(.failure(DSError.unknown))
                 return
             }
             
@@ -89,7 +89,7 @@ open class Dyson {
                 interceptors: self.interceptors
             ) { [weak self] response in
                 guard let self else {
-                    completion(.failure(DysonError.unknown))
+                    completion(.failure(DSError.unknown))
                     return
                 }
                 
@@ -109,7 +109,7 @@ open class Dyson {
     // MARK: - Private
     private func request(
         spec: some Spec,
-        dyson: Dyson,
+        dyson: DS,
         defaultHeaders: HTTPHeaders,
         interceptors: [any Interceptor],
         progress: ((Progress) -> Void)?,
@@ -129,7 +129,7 @@ open class Dyson {
             requestModifier: requestModifier
         ) { [weak self] result in
             guard let self else {
-                completion(task, .failure(DysonError.unknown))
+                completion(task, .failure(DSError.unknown))
                 return
             }
             
@@ -140,7 +140,7 @@ open class Dyson {
                     request,
                     with: spec
                 )
-
+                
                 task.addChild(sessionTask)
                 
                 sessionTask._resume { response in
@@ -159,7 +159,7 @@ open class Dyson {
     private func request(
         spec: some Spec,
         task: ContainerSessionTask,
-        dyson: Dyson,
+        dyson: DS,
         defaultHeaders: HTTPHeaders,
         interceptors: [any Interceptor],
         requestModifier: ((URLRequest) -> URLRequest)?,
@@ -167,7 +167,7 @@ open class Dyson {
     ) {
         guard let url = spec.url else {
             // Validate URL.
-            completion(.failure(DysonError.invalidURL))
+            completion(.failure(DSError.invalidURL))
             return
         }
         
@@ -230,7 +230,7 @@ open class Dyson {
         _ response: Result<(Data, URLResponse), any Error>,
         task: ContainerSessionTask,
         spec: some Spec,
-        dyson: Dyson,
+        dyson: DS,
         interceptors: [any Interceptor],
         completion: @escaping (Result<(Data, URLResponse), any Error>) -> Void
     ) {
@@ -261,12 +261,12 @@ open class Dyson {
         _ response: Result<(Data, URLResponse), any Error>,
         task: ContainerSessionTask,
         spec: S,
-        dyson: Dyson,
+        dyson: DS,
         interceptors: [any Interceptor],
         completion: @escaping (Result<S.Result, any Error>) -> Void
     ) {
         guard let responser = spec.responser else {
-            completion(.failure(DysonError.responserDoseNotExist))
+            completion(.failure(DSError.responserDoseNotExist))
             return
         }
         
