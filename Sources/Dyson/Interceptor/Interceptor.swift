@@ -12,7 +12,7 @@ public protocol Interceptor {
         _ request: URLRequest,
         dyson: DS,
         spec: some Spec,
-        sessionTask: ContainerSessionTask,
+        sessionTask: any StateSessionTask,
         continuation: Continuation<URLRequest>
     )
     
@@ -20,7 +20,7 @@ public protocol Interceptor {
         _ response: Result<(Data, URLResponse), any Error>,
         dyson: DS,
         spec: some Spec,
-        sessionTask: ContainerSessionTask,
+        sessionTask: any StateSessionTask,
         continuation: Continuation<Result<(Data, URLResponse), any Error>>
     )
     
@@ -28,7 +28,7 @@ public protocol Interceptor {
         _ result: Result<S.Result, any Error>,
         dyson: DS,
         spec: S,
-        sessionTask: ContainerSessionTask,
+        sessionTask: any StateSessionTask,
         continuation: Continuation<Result<S.Result, any Error>>
     )
 }
@@ -38,7 +38,7 @@ public extension Interceptor {
         _ request: URLRequest,
         dyson: DS,
         spec: some Spec,
-        sessionTask: ContainerSessionTask,
+        sessionTask: any StateSessionTask,
         continuation: Continuation<URLRequest>
     ) {
         continuation(request)
@@ -48,7 +48,7 @@ public extension Interceptor {
         _ response: Result<(Data, URLResponse), any Error>,
         dyson: DS,
         spec: some Spec,
-        sessionTask: ContainerSessionTask,
+        sessionTask: any StateSessionTask,
         continuation: Continuation<Result<(Data, URLResponse), any Error>>
     ) {
         continuation(response)
@@ -58,7 +58,7 @@ public extension Interceptor {
         _ result: Result<S.Result, any Error>,
         dyson: DS,
         spec: S,
-        sessionTask: ContainerSessionTask,
+        sessionTask: any StateSessionTask,
         continuation: Continuation<Result<S.Result, any Error>>
     ) {
         continuation(result)

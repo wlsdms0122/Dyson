@@ -10,12 +10,8 @@ import Dyson
 
 public class MockDataSessionTask<T>: DataSessionTask {
     // MARK: - Property
-    public var state = SessionTaskState()
-    
     public var request: URLRequest?
     public var progress: Progress?
-    
-    public weak var delegate: (any SessionTaskDelegate)?
     
     private let data: T
     private let _cancel: (() -> Void)?

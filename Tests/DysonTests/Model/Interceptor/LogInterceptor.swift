@@ -19,7 +19,7 @@ struct LogInterceptor: Interceptor {
         _ request: URLRequest,
         dyson: DS,
         spec: some Spec,
-        sessionTask: ContainerSessionTask,
+        sessionTask: any StateSessionTask,
         continuation: Continuation<URLRequest>
     ) {
         print("""
@@ -41,7 +41,7 @@ struct LogInterceptor: Interceptor {
         _ response: Result<(Data, URLResponse), any Error>,
         dyson: DS,
         spec: some Spec,
-        sessionTask: ContainerSessionTask,
+        sessionTask: any StateSessionTask,
         continuation: Continuation<Result<(Data, URLResponse), any Error>>
     ) {
         var data: Data?

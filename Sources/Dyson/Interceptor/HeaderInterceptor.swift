@@ -27,7 +27,7 @@ public struct HeaderInterceptor: Interceptor {
         _ request: URLRequest,
         dyson: DS,
         spec: some Spec,
-        sessionTask: ContainerSessionTask,
+        sessionTask: any StateSessionTask,
         continuation: Continuation<URLRequest>
     ) {
         var request = request

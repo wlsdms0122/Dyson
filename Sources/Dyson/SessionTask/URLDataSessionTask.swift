@@ -1,27 +1,21 @@
 //
-//  URLDataSessionTask.swift
-//  
+//  URLSessionDataTask.swift
+//
 //
 //  Created by JSilver on 2023/02/12.
 //
 
 import Foundation
 
-final public class URLDataSessionTask: DataSessionTask {
+public final class URLDataSessionTask: DataSessionTask {
     // MARK: - Property
-    public var state = SessionTaskState()
-    
+    private let _request: URLRequest
     public var request: URLRequest? { _request }
+    
     public var progress: Progress? { sessionTask?.progress }
     
-    public weak var delegate: (any SessionTaskDelegate)?
-    
     private let session: URLSession
-    private let _request: URLRequest
-    
     private var sessionTask: URLSessionTask?
-    
-    private var progressObservation: NSKeyValueObservation?
     
     // MARK: - Initialzer
     public init(
@@ -44,11 +38,9 @@ final public class URLDataSessionTask: DataSessionTask {
             }
         }
         
-        progressObservation = observe(progress: sessionTask.progress)
+        sessionTask.resume()
         
         self.sessionTask = sessionTask
-        
-        sessionTask.resume()
     }
     
     public func cancel() {
@@ -58,23 +50,16 @@ final public class URLDataSessionTask: DataSessionTask {
     // MARK: - Private
 }
 
-final public class URLUploadSessionTask: DataSessionTask {
+public final class URLUploadDataSessionTask: DataSessionTask {
     // MARK: - Property
-    public var state = SessionTaskState()
-    
+    private let _request: URLRequest
     public var request: URLRequest? { _request }
     public var progress: Progress? { sessionTask?.progress }
     
-    public weak var delegate: (any SessionTaskDelegate)?
-    
     private let session: URLSession
-    
-    private let _request: URLRequest
-    private let data: Data
-    
     private var sessionTask: URLSessionTask?
     
-    private var progressObservation: NSKeyValueObservation?
+    private let data: Data
     
     // MARK: - Initialzer
     public init(
@@ -99,8 +84,6 @@ final public class URLUploadSessionTask: DataSessionTask {
             }
         }
         
-        progressObservation = observe(progress: sessionTask.progress)
-        
         sessionTask.resume()
         
         self.sessionTask = sessionTask
@@ -113,22 +96,14 @@ final public class URLUploadSessionTask: DataSessionTask {
     // MARK: - Private
 }
 
-final public class URLDownloadSessionTask: DataSessionTask {
+public final class URLDownloadDataSessionTask: DataSessionTask {
     // MARK: - Property
-    public var state = SessionTaskState()
-    
+    private let _request: URLRequest
     public var request: URLRequest? { _request }
     public var progress: Progress? { sessionTask?.progress }
     
-    public weak var delegate: (any SessionTaskDelegate)?
-    
     private let session: URLSession
-    
-    private let _request: URLRequest
-    
     private var sessionTask: URLSessionTask?
-    
-    private var progressObservation: NSKeyValueObservation?
     
     // MARK: - Initialzer
     public init(
@@ -155,8 +130,6 @@ final public class URLDownloadSessionTask: DataSessionTask {
                 completion(.failure(DSError.unknown))
             }
         }
-        
-        progressObservation = observe(progress: sessionTask.progress)
         
         sessionTask.resume()
         

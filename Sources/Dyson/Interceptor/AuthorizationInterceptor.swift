@@ -25,7 +25,7 @@ public struct AuthorizationInterceptor: Interceptor {
         _ request: URLRequest,
         dyson: DS,
         spec: some Spec,
-        sessionTask: ContainerSessionTask,
+        sessionTask: any StateSessionTask,
         continuation: Continuation<URLRequest>
     ) {
         guard let spec = spec as? Authorizable,

@@ -1,5 +1,5 @@
 //
-//  SessionTaskState.swift
+//  SessionState.swift
 //
 //
 //  Created by JSilver on 2023/06/13.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-final public class SessionTaskState {
+final public class SessionState: @unchecked Sendable {
     // MARK: - Property
     private var state: [String: Any]
     
@@ -30,9 +30,8 @@ final public class SessionTaskState {
         state[key] as? T
     }
     
-    public func merging(_ state: SessionTaskState) -> SessionTaskState {
+    public func merge(_ state: SessionState) {
         self.state.merge(state.state) { _, new in new }
-        return self
     }
     
     // MARK: - Private

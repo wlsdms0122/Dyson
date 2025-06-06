@@ -143,7 +143,7 @@ open class DS {
                 
                 task.addChild(sessionTask)
                 
-                sessionTask._resume { response in
+                sessionTask.resume { response in
                     completion(task, response)
                 }
                 
