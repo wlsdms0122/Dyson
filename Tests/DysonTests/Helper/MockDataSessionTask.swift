@@ -10,8 +10,8 @@ import Dyson
 
 public class MockDataSessionTask<T>: DataSessionTask {
     // MARK: - Property
-    public var request: URLRequest?
-    public var progress: Progress?
+    public let request: URLRequest? = nil
+    public let progress: Progress? = nil
     
     private let data: T
     private let _cancel: (() -> Void)?

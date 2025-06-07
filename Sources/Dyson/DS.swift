@@ -7,7 +7,7 @@
 
 import Foundation
 
-open class DS {
+open class DS: @unchecked Sendable {
     // MARK: - Property
     private let provider: any NetworkProvider
     

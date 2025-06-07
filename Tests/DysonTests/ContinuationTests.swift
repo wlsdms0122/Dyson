@@ -5,51 +5,36 @@
 //  Created by JSilver on 2023/06/20.
 //
 
-import XCTest
+import Testing
 @testable import Dyson
 
-final class ContinuationTests: XCTestCase {
-    // MARK: - Property
-    
-    // MARK: - Lifecycle
-    override func setUp() { }
-    
-    override func tearDown() { }
-    
-    // MARK: - Test
-    func test_that_continuation_success_when_call_with_value() async throws {
-        // Given
+@Suite("Continuation Tests")
+struct ContinuationTests {
+    @Test
+    func continuation_resume_with_value() async throws {
         let continuation = Continuation<Int> { result in
-            switch result {
-            case let .success(value):
-                XCTAssertEqual(value, 10)
-                
-            case .failure:
-                XCTFail()
+            guard case let .success(value) = result else {
+                Issue.record("Continuation failed.")
+                return
             }
+            
+            #expect(value == 10)
         }
         
-        // When
         continuation(10)
-        
-        // Then
     }
     
-    func test_that_continuation_fail_when_call_with_error() async throws {
-        // Given
+    @Test
+    func continuation_resume_with_error() async throws {
         let continuation = Continuation<Int> { result in
-            switch result {
-            case .success:
-                XCTFail()
-                
-            case let .failure(error):
-                XCTAssertEqual((error as? TestError)?.id, "10")
+            guard case let .failure(error) = result else {
+                Issue.record("Continuation succeed.")
+                return
             }
+            
+            #expect((error as? TestError)?.id == "10")
         }
         
-        // When
-        continuation(throwing: TestError(id: "10", message: "stop continuration"))
-        
-        // Then
+        continuation(throwing: TestError(id: "10", message: "Continuation failed."))
     }
 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol Responser {
+public protocol Responser: Sendable {
     func response<S: Spec>(
         _ response: Result<(Data, URLResponse), any Error>,
         spec: S

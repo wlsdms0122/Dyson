@@ -5,28 +5,20 @@
 //  Created by JSilver on 2023/06/20.
 //
 
-import XCTest
+import Foundation
+import Testing
 @testable import Dyson
 
-final class InterceptorTests: XCTestCase {
-    // MARK: - Property
-    
-    // MARK: - Lifecycle
-    override func setUp() { }
-    
-    override func tearDown() { }
-    
-    // MARK: - Test
-    func test_that_header_interceptor_add_header_field_into_request_on_dyson_response() async throws {
-        // Given
-        let sut = HeaderInterceptor(key: "Authorization", value: "Bearer dyson-test")
+@Suite("Interceptor Tests")
+struct InterceptorTests {
+    @Test
+    func header_interceptor_add_header_field_into_request() async throws {
+        let sut = HeaderInterceptor(key: "Authorization", value: "Bearer dyson-test-token")
+        
         let dyson = DS(
             provider: .mock(
                 dataTask: { request, completion in
-                    XCTAssertEqual(
-                        request.allHTTPHeaderFields?["Authorization"],
-                        "Bearer dyson-test"
-                    )
+                    #expect(request.allHTTPHeaderFields?["Authorization"] == "Bearer dyson-test-token")
                     
                     completion(.success((Data(), .http(request, status: 200))))
                 }
@@ -35,22 +27,17 @@ final class InterceptorTests: XCTestCase {
         )
         let spec = MockSpec<Empty, Empty, Empty>()
         
-        // When
-        let _ = try await dyson.response(spec)
-        
-        // Then
+        try await dyson.response(spec)
     }
     
-    func test_that_authorization_interceptor_add_authorization_field_into_request_on_dyson_response() async throws {
-        // Given
-        let sut = AuthorizationInterceptor(token: "Bearer dyson-test")
+    @Test
+    func authorization_interceptor_add_authorization_field_into_request() async throws {
+        let sut = AuthorizationInterceptor(token: "Bearer dyson-test-token")
+        
         let dyson = DS(
             provider: .mock(
                 dataTask: { request, completion in
-                    XCTAssertEqual(
-                        request.allHTTPHeaderFields?["Authorization"],
-                        "Bearer dyson-test"
-                    )
+                    #expect(request.allHTTPHeaderFields?["Authorization"] == "Bearer dyson-test-token")
                     
                     completion(.success((Data(), .http(request, status: 200))))
                 }
@@ -59,10 +46,6 @@ final class InterceptorTests: XCTestCase {
         )
         let spec = MockSpec<Empty, Empty, Empty>()
         
-        // When
-        let _ = try await dyson.response(spec)
-        
-        // Then
+        try await dyson.response(spec)
     }
-    
 }

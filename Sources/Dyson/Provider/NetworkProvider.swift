@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol NetworkProvider {
+public protocol NetworkProvider: Sendable {
     func dataTask(with request: URLRequest) -> any DataSessionTask
     func uploadTask(with request: URLRequest, from data: Data) -> any DataSessionTask
     func downloadTask(with request: URLRequest) -> any DataSessionTask

@@ -5,20 +5,14 @@
 //  Created by JSilver on 2023/06/20.
 //
 
-import XCTest
+import Foundation
+import Testing
 @testable import Dyson
 
-final class DysonTests: XCTestCase {
-    // MARK: - Property
-    
-    // MARK: - Lifecycle
-    override func setUp() { }
-    
-    override func tearDown() { }
-    
-    // MARK: - Test
-    func test_that_dyson_response_using_spec() async throws {
-        // Given
+@Suite("Dyson Tests")
+struct DysonTests {
+    @Test
+    func dyson_response_using_spec() async throws {
         let data = "dyson".data(using: .utf8)!
         
         let sut = DS(
@@ -30,15 +24,13 @@ final class DysonTests: XCTestCase {
         )
         let spec = MockSpec<Empty, Empty, Empty>()
         
-        // When
         let (response, _) = try await sut.response(spec)
         
-        // Then
-        XCTAssertEqual(response, data)
+        #expect(response == data)
     }
     
-    func test_that_dyson_response_data_using_spec() async throws {
-        // Given
+    @Test
+    func dyson_response_data_using_spec() async throws {
         let person = Person(name: "dyson")
         let json = """
         {
@@ -60,15 +52,13 @@ final class DysonTests: XCTestCase {
             result: .codable()
         )
         
-        // When
         let response = try await sut.data(spec)
         
-        // Then
-        XCTAssertEqual(response, person)
+        #expect(response == person)
     }
     
-    func test_that_dyson_throw_error_when_spec_does_not_specifiy_responser() async throws {
-        // Given
+    @Test
+    func dyson_throw_error_when_spec_does_not_specifiy_responser() async throws {
         let json = """
         {
             "name": "dyson"
@@ -88,12 +78,8 @@ final class DysonTests: XCTestCase {
             result: .codable()
         )
         
-        // When
-        do {
+        await #expect(throws: (any Error).self) {
             try await sut.data(spec)
-            XCTFail()
-        } catch {
-            
         }
     }
 }
