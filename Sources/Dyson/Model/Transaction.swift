@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum Transaction {
+public enum Transaction: Sendable {
     case data
     case upload(Data)
     case download

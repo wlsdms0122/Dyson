@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct GraphQLQuery: Encodable {
+public struct GraphQLQuery: Encodable, @unchecked Sendable {
     struct AnyEncodable: Encodable {
         // MARK: - Property
         let value: Any

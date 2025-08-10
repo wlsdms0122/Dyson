@@ -77,7 +77,7 @@ struct RequestTests {
     
     @Test
     func combined_query_and_body_request_applies_both() async throws {
-        let query: [String: Any] = [
+        let query: [String: any Sendable] = [
             "name": ["dyson", "wlsdms0122"],
             "age": 30,
             "isAdmin": true,

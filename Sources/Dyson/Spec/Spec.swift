@@ -7,9 +7,9 @@
 
 import Foundation
 
-public protocol Spec {
+public protocol Spec: Sendable {
     associatedtype Parameter
-    associatedtype Result
+    associatedtype Result: Sendable
     associatedtype Error: Swift.Error
     
     var parameter: Parameter { get }

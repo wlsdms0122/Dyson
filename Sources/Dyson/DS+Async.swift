@@ -30,8 +30,8 @@ public extension DS {
     @discardableResult
     func response(
         _ spec: some Spec,
-        progress: ((Progress) -> Void)? = nil,
-        requestModifier: ((URLRequest) -> URLRequest)? = nil
+        progress: (@Sendable (Progress) -> Void)? = nil,
+        requestModifier: (@Sendable (URLRequest) -> URLRequest)? = nil
     ) async throws -> (Data, URLResponse) {
         let cancellableTask = CancellableTask()
         
@@ -65,8 +65,8 @@ public extension DS {
     @discardableResult
     func data<S: Spec>(
         _ spec: S,
-        progress: ((Progress) -> Void)? = nil,
-        requestModifier: ((URLRequest) -> URLRequest)? = nil
+        progress: (@Sendable (Progress) -> Void)? = nil,
+        requestModifier: (@Sendable (URLRequest) -> URLRequest)? = nil
     ) async throws -> S.Result {
         let cancellableTask = CancellableTask()
         

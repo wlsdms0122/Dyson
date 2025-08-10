@@ -7,13 +7,13 @@
 
 import Foundation
 
-public struct HeaderInterceptor: Interceptor {
+public struct HeaderInterceptor: Interceptor, Sendable {
     // MARK: - Property
     private let key: String
-    private let value: () -> String?
+    private let value: @Sendable () -> String?
     
     // MARK: - Initializer
-    public init(key: String, value: @escaping () -> String?) {
+    public init(key: String, value: @escaping @Sendable () -> String?) {
         self.key = key
         self.value = value
     }

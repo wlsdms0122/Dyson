@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol SessionTaskDelegate: AnyObject {
+public protocol SessionTaskDelegate: AnyObject, Sendable {
     func sessionTaskDidResume(_ sessionTask: any SessionTask)
     func sessionTask(_ sessionTask: any SessionTask, didSend bytes: Int64, totalBytes: Int64)
     func sessionTaskDidCancel(_ sessionTask: any SessionTask)

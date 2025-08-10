@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - Encoder
-public protocol Encode<Value> {
+public protocol Encode<Value>: Sendable {
     associatedtype Value
     
     func encode(_ value: Value) throws -> Data

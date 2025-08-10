@@ -9,10 +9,10 @@ import Foundation
 
 public struct CodableEncode<Value: Encodable>: Encode {
     // MARK: - Property
-    private let config: (JSONEncoder) -> Void
+    private let config: @Sendable (JSONEncoder) -> Void
     
     // MARK: - Initalizer
-    public init(config: @escaping (JSONEncoder) -> Void = { _ in }) {
+    public init(config: @escaping @Sendable (JSONEncoder) -> Void = { _ in }) {
         self.config = config
     }
     
@@ -28,7 +28,7 @@ public struct CodableEncode<Value: Encodable>: Encode {
 }
 
 public extension Encoder where Value: Encodable {
-    static func codable(config: @escaping (JSONEncoder) -> Void = { _ in }) -> Self {
+    static func codable(config: @escaping @Sendable (JSONEncoder) -> Void = { _ in }) -> Self {
         Encoder(CodableEncode(config: config))
     }
 }

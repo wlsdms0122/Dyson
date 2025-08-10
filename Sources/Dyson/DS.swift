@@ -7,7 +7,7 @@
 
 import Foundation
 
-open class DS: @unchecked Sendable {
+final public class DS: @unchecked Sendable {
     // MARK: - Property
     private let provider: any NetworkProvider
     
@@ -27,11 +27,11 @@ open class DS: @unchecked Sendable {
     
     // MARK: - Public
     @discardableResult
-    open func response(
+    public func response(
         _ spec: some Spec,
-        progress: ((Progress) -> Void)? = nil,
-        requestModifier: ((URLRequest) -> URLRequest)? = nil,
-        completion: @escaping (Result<(Data, URLResponse), any Error>) -> Void
+        progress: (@Sendable (Progress) -> Void)? = nil,
+        requestModifier: (@Sendable (URLRequest) -> URLRequest)? = nil,
+        completion: @escaping @Sendable (Result<(Data, URLResponse), any Error>) -> Void
     ) -> any SessionTask {
         // Request network with spec.
         request(
@@ -60,11 +60,11 @@ open class DS: @unchecked Sendable {
     }
     
     @discardableResult
-    open func data<S: Spec>(
+    public func data<S: Spec>(
         _ spec: S,
-        progress: ((Progress) -> Void)? = nil,
-        requestModifier: ((URLRequest) -> URLRequest)? = nil,
-        completion: @escaping (Result<S.Result, any Error>) -> Void
+        progress: (@Sendable (Progress) -> Void)? = nil,
+        requestModifier: (@Sendable (URLRequest) -> URLRequest)? = nil,
+        completion: @escaping @Sendable (Result<S.Result, any Error>) -> Void
     ) -> any SessionTask {
         // Request network with spec.
         request(
@@ -112,9 +112,9 @@ open class DS: @unchecked Sendable {
         dyson: DS,
         defaultHeaders: HTTPHeaders,
         interceptors: [any Interceptor],
-        progress: ((Progress) -> Void)?,
-        requestModifier: ((URLRequest) -> URLRequest)?,
-        completion: @escaping (ContainerSessionTask, Result<(Data, URLResponse), any Error>) -> Void
+        progress: (@Sendable (Progress) -> Void)?,
+        requestModifier: (@Sendable (URLRequest) -> URLRequest)?,
+        completion: @escaping @Sendable (ContainerSessionTask, Result<(Data, URLResponse), any Error>) -> Void
     ) -> any SessionTask {
         // Create new container session task for current request.
         let task = ContainerSessionTask(progress: progress)
@@ -162,8 +162,8 @@ open class DS: @unchecked Sendable {
         dyson: DS,
         defaultHeaders: HTTPHeaders,
         interceptors: [any Interceptor],
-        requestModifier: ((URLRequest) -> URLRequest)?,
-        completion: @escaping (Result<URLRequest, any Error>) -> Void
+        requestModifier: (@Sendable (URLRequest) -> URLRequest)?,
+        completion: @escaping @Sendable (Result<URLRequest, any Error>) -> Void
     ) {
         guard let url = spec.url else {
             // Validate URL.
@@ -232,7 +232,7 @@ open class DS: @unchecked Sendable {
         spec: some Spec,
         dyson: DS,
         interceptors: [any Interceptor],
-        completion: @escaping (Result<(Data, URLResponse), any Error>) -> Void
+        completion: @escaping @Sendable (Result<(Data, URLResponse), any Error>) -> Void
     ) {
         // Traversal all response interceptors after request.
         intercept(
@@ -263,7 +263,7 @@ open class DS: @unchecked Sendable {
         spec: S,
         dyson: DS,
         interceptors: [any Interceptor],
-        completion: @escaping (Result<S.Result, any Error>) -> Void
+        completion: @escaping @Sendable (Result<S.Result, any Error>) -> Void
     ) {
         guard let responser = spec.responser else {
             completion(.failure(DSError.responserDoseNotExist))
@@ -304,8 +304,8 @@ open class DS: @unchecked Sendable {
     private func intercept<Value>(
         _ interceptors: [any Interceptor],
         initialValue: Value,
-        intercept: @escaping (any Interceptor, Value, @escaping (Result<Value, any Error>) -> Void) -> Void,
-        completion: @escaping (Result<Value, Error>) -> Void
+        intercept: @escaping @Sendable (any Interceptor, Value, @escaping @Sendable (Result<Value, any Error>) -> Void) -> Void,
+        completion: @escaping @Sendable (Result<Value, Error>) -> Void
     ) {
         TaskQueue(initialValue) { queue in
             interceptors.forEach { interceptor in

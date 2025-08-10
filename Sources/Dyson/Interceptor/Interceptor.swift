@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol Interceptor {
+public protocol Interceptor: Sendable {
     func request(
         _ request: URLRequest,
         dyson: DS,

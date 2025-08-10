@@ -7,7 +7,7 @@
 
 import Foundation
 
-public final class URLDataSessionTask: DataSessionTask {
+public final class URLDataSessionTask: DataSessionTask, @unchecked Sendable {
     // MARK: - Property
     private let _request: URLRequest
     public var request: URLRequest? { _request }
@@ -27,7 +27,7 @@ public final class URLDataSessionTask: DataSessionTask {
     }
     
     // MARK: - Public
-    public func resume(completion: @escaping (Result<(Data, URLResponse), any Error>) -> Void) {
+    public func resume(completion: @escaping @Sendable (Result<(Data, URLResponse), any Error>) -> Void) {
         let sessionTask = session.dataTask(with: _request) { data, response, error in
             if let error {
                 completion(.failure(error))
@@ -50,7 +50,7 @@ public final class URLDataSessionTask: DataSessionTask {
     // MARK: - Private
 }
 
-public final class URLUploadDataSessionTask: DataSessionTask {
+public final class URLUploadDataSessionTask: DataSessionTask, @unchecked Sendable {
     // MARK: - Property
     private let _request: URLRequest
     public var request: URLRequest? { _request }
@@ -73,7 +73,7 @@ public final class URLUploadDataSessionTask: DataSessionTask {
     }
     
     // MARK: - Public
-    public func resume(completion: @escaping (Result<(Data, URLResponse), any Error>) -> Void) {
+    public func resume(completion: @escaping @Sendable (Result<(Data, URLResponse), any Error>) -> Void) {
         let sessionTask = session.uploadTask(with: _request, from: data) { data, response, error in
             if let error {
                 completion(.failure(error))
@@ -96,7 +96,7 @@ public final class URLUploadDataSessionTask: DataSessionTask {
     // MARK: - Private
 }
 
-public final class URLDownloadDataSessionTask: DataSessionTask {
+public final class URLDownloadDataSessionTask: DataSessionTask, @unchecked Sendable {
     // MARK: - Property
     private let _request: URLRequest
     public var request: URLRequest? { _request }
@@ -115,7 +115,7 @@ public final class URLDownloadDataSessionTask: DataSessionTask {
     }
     
     // MARK: - Public
-    public func resume(completion: @escaping (Result<(Data, URLResponse), any Error>) -> Void) {
+    public func resume(completion: @escaping @Sendable (Result<(Data, URLResponse), any Error>) -> Void) {
         let sessionTask = session.downloadTask(with: _request) { url, response, error in
             if let error {
                 completion(.failure(error))

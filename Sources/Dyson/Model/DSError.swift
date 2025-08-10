@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum DSError: Error {
+public enum DSError: Error, Sendable {
     case responserDoseNotExist
     case invalidURL
     case failedToParse(Error?)

@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - Map
-public protocol Map<Value> {
+public protocol Map<Value>: Sendable {
     associatedtype Value
     
     func map(_ data: Data) throws -> Value

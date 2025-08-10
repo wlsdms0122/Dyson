@@ -7,12 +7,12 @@
 
 import Foundation
 
-public struct AuthorizationInterceptor: Interceptor {
+public struct AuthorizationInterceptor: Interceptor, Sendable {
     // MARK: - Property
-    private let token: () -> String?
+    private let token: @Sendable () -> String?
     
     // MARK: - Initializer
-    public init(token: @escaping () -> String?) {
+    public init(token: @escaping @Sendable () -> String?) {
         self.token = token
     }
     

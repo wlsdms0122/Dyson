@@ -22,7 +22,7 @@ extension NetworkProvider where Self == MockNetworkProvider {
     }
 }
 
-struct MockNetworkProvider: NetworkProvider {
+struct MockNetworkProvider: NetworkProvider, @unchecked Sendable {
     typealias DataTaskHandler = (URLRequest, @escaping (Result<(Data, URLResponse), any Error>) -> Void) -> Void
     typealias UploadTaskHandler = (URLRequest, Data, @escaping (Result<(Data, URLResponse), any Error>) -> Void) -> Void
     typealias DownloadTaskHandler = (URLRequest, @escaping (Result<(Data, URLResponse), any Error>) -> Void) -> Void

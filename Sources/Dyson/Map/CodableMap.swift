@@ -9,10 +9,10 @@ import Foundation
 
 public struct CodableMap<Value: Decodable>: Map {
     // MARK: - Property
-    private let config: (JSONDecoder) -> Void
+    private let config: @Sendable (JSONDecoder) -> Void
     
     // MARK: - Initializer
-    public init(config: @escaping (JSONDecoder) -> Void = { _ in }) {
+    public init(config: @escaping @Sendable (JSONDecoder) -> Void = { _ in }) {
         self.config = config
     }
     
@@ -32,7 +32,7 @@ public struct CodableMap<Value: Decodable>: Map {
 }
 
 public extension Mapper where Value: Decodable {
-    static func codable(config: @escaping (JSONDecoder) -> Void = { _ in }) -> Self {
+    static func codable(config: @escaping @Sendable (JSONDecoder) -> Void = { _ in }) -> Self {
         Mapper(CodableMap<Value>(config: config))
     }
 }

@@ -7,12 +7,12 @@
 
 import Foundation
 
-public struct Continuation<Value> {
+public struct Continuation<Value>: Sendable {
     // MARK: - Property
-    private let handler: (Result<Value, any Error>) -> Void
+    private let handler: @Sendable (Result<Value, any Error>) -> Void
     
     // MARK: - Initializer
-    init(_ handler: @escaping (Result<Value, any Error>) -> Void) {
+    init(_ handler: @escaping @Sendable (Result<Value, any Error>) -> Void) {
         self.handler = handler
     }
     

@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - Request
-public protocol Request {
+public protocol Request: Sendable {
     func apply(to request: inout URLRequest) throws
 }
 

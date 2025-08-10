@@ -8,7 +8,7 @@
 import Foundation
 import Dyson
 
-public class MockDataSessionTask<T>: DataSessionTask {
+public class MockDataSessionTask<T>: DataSessionTask, @unchecked Sendable {
     // MARK: - Property
     public let request: URLRequest? = nil
     public let progress: Progress? = nil

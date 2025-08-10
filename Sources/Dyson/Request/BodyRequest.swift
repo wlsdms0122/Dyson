@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct BodyRequest<Parameter>: Request {
+public struct BodyRequest<Parameter: Sendable>: Request {
     // MARK: - Property
     private let parameter: Parameter
     private let encoder: Encoder<Parameter>

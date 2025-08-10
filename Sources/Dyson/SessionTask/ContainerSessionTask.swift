@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class ContainerSessionTask: DataSessionTask, StateSessionTask, DelegatedSessionTask {
+final class ContainerSessionTask: DataSessionTask, StateSessionTask, DelegatedSessionTask, @unchecked Sendable {
     // MARK: - Property
     private var children: [any SessionTask] = []
     
@@ -31,7 +31,7 @@ final class ContainerSessionTask: DataSessionTask, StateSessionTask, DelegatedSe
     }
     
     // MARK: - Public
-    func resume(completion: @escaping (Result<(Data, URLResponse), any Error>) -> Void) {
+    func resume(completion: @escaping @Sendable (Result<(Data, URLResponse), any Error>) -> Void) {
         guard let task = currentTask as? DataSessionTask else { return }
         
         task.resume { [weak self] result in

@@ -8,7 +8,7 @@
 import Foundation
 import Dyson
 
-struct MockSpec<Parameter, Result, Error: Swift.Error>: Spec {
+struct MockSpec<Parameter, Result, Error: Swift.Error>: Spec, @unchecked Sendable {
     // MARK: - Property
     let baseURL: String
     let path: String

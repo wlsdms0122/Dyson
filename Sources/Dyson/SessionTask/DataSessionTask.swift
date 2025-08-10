@@ -8,12 +8,12 @@
 import Foundation
 
 public protocol DataSessionTask: SessionTask {
-    func resume(completion: @escaping (Result<(Data, URLResponse), any Error>) -> Void)
+    func resume(completion: @escaping @Sendable (Result<(Data, URLResponse), any Error>) -> Void)
     func resume() async throws -> (Data, URLResponse)
 }
 
 public extension DataSessionTask {
-    func resume(completion: @escaping (Result<(Data, URLResponse), any Error>) -> Void) {
+    func resume(completion: @escaping @Sendable (Result<(Data, URLResponse), any Error>) -> Void) {
         Task {
             do {
                 completion(.success(try await resume()))

@@ -9,11 +9,11 @@ import Foundation
 
 public struct QueryRequest: Request {
     // MARK: - Property
-    private let parameter: [String: Any]
+    private let parameter: [String: any Sendable]
     private let isEncoded: Bool
     
     // MARK: - Initializer
-    public init(_ parameter: [String: Any], isEncoded: Bool = false) {
+    public init(_ parameter: [String: any Sendable], isEncoded: Bool = false) {
         self.parameter = parameter
         self.isEncoded = isEncoded
     }
@@ -54,7 +54,7 @@ public struct QueryRequest: Request {
 
 public extension Request {
     static func query(
-        _ parameter: [String: Any],
+        _ parameter: [String: any Sendable],
         isEncoded: Bool = false
     ) -> Self where Self == QueryRequest {
         QueryRequest(parameter, isEncoded: isEncoded)

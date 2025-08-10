@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol SessionTask: AnyObject {
+public protocol SessionTask: AnyObject, Sendable {
     /// The request associated with the session task.
     var request: URLRequest? { get }
     /// The progress that reports the progress of the session task.
